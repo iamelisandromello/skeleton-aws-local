@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack:3.2
+    container_name: localstack
+    ports:
+      - "4566:4566"     # Porta principal de serviços AWS
+      - "4510-4559:4510-4559" # Outras portas internas
+      - "8080:8080"     # UI
+    environment:
+      - SERVICES=lambda,sqs,s3,dynamodb,apigateway
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - LAMBDA_EXECUTOR=docker-reuse
+      - LOCALSTACK_API_KEY=your-key-if-needed
+    volumes:
+      - ./localstack:/etc/localstack/init/ready.d  # scripts de inicialização
+      - /var/run/docker.sock:/var/run/docker.sock
