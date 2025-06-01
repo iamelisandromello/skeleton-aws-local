@@ -1,5 +1,5 @@
 // deleters-resources.ts
-import { extractNameFromUrl } from '../selectors'
+import { extractNameFromUrl } from './tasks/deleters-selectors-task'
 import {
   lambda,
   sqs,
@@ -91,6 +91,7 @@ export async function deleteRestApisByFilter(pattern: RegExp) {
   }
 }
 
+// Routes do API Gateway
 export async function deleteApiGatewayRoutesByFilter(
   apiId: string,
   pattern: RegExp
