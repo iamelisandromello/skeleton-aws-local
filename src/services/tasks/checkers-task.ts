@@ -1,26 +1,25 @@
-// cli/service-checkers.ts
-import { S3Client, ListBucketsCommand } from '@aws-sdk/client-s3'
-import { SQSClient, ListQueuesCommand } from '@aws-sdk/client-sqs'
-import { LambdaClient, ListFunctionsCommand } from '@aws-sdk/client-lambda'
-import {
-  APIGatewayClient,
-  GetRestApisCommand,
-  GetResourcesCommand
-} from '@aws-sdk/client-api-gateway'
+// cli/services/tasks/checkers-task.ts
 import {
   DynamoDBClient,
   ListTablesCommand,
   DescribeTableCommand
 } from '@aws-sdk/client-dynamodb'
 import {
+  APIGatewayClient,
+  GetRestApisCommand,
+  GetResourcesCommand
+} from '@aws-sdk/client-api-gateway'
+import {
   CloudWatchLogsClient,
   DescribeLogGroupsCommand
 } from '@aws-sdk/client-cloudwatch-logs'
+import { logError, logResult } from '../../logers/logs'
+import { localConfig } from '../../../localstack/aws-config'
+import { S3Client, ListBucketsCommand } from '@aws-sdk/client-s3'
+import { SQSClient, ListQueuesCommand } from '@aws-sdk/client-sqs'
 import { SNSClient, ListTopicsCommand } from '@aws-sdk/client-sns'
+import { LambdaClient, ListFunctionsCommand } from '@aws-sdk/client-lambda'
 import { KinesisClient, ListStreamsCommand } from '@aws-sdk/client-kinesis'
-
-import { logError, logResult } from './logger/logs'
-import { localConfig } from './localstack/aws-config'
 
 export async function checkS3() {
   try {

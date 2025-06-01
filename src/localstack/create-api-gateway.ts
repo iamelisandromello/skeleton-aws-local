@@ -7,7 +7,12 @@ import {
   PutMethodCommand,
   PutIntegrationCommand
 } from '@aws-sdk/client-api-gateway'
-import { apigateway, API_NAME, API_ROUTES, LAMBDA_NAME } from './aws-config'
+import {
+  apigateway,
+  API_NAME,
+  API_ROUTES,
+  LAMBDA_NAME
+} from '../../localstack/aws-config'
 
 async function main() {
   console.log(`🚀 Verificando se a API "${API_NAME}" já existe...`)
@@ -17,9 +22,9 @@ async function main() {
 
   let restApiId: string
 
-  if (existingApi) {
+  if (existingApi?.id) {
     console.log(`✅ API "${API_NAME}" já existe.`)
-    restApiId = existingApi.id!
+    restApiId = existingApi.id
   } else {
     console.log(`🛠️ Criando API Gateway "${API_NAME}"...`)
     const createApiRes = await apigateway.send(
@@ -28,7 +33,12 @@ async function main() {
         description: 'API gerenciada localmente via script'
       })
     )
-    restApiId = createApiRes.id!
+
+    if (!createApiRes.id) {
+      throw new Error('❌ Falha ao criar a API Gateway: ID não retornado.')
+    }
+
+    restApiId = createApiRes.id
     console.log(`✅ API "${API_NAME}" criada com ID: ${restApiId}`)
   }
 
@@ -38,7 +48,9 @@ async function main() {
   )
 
   const rootResource = resources.items?.find((res) => res.path === '/')
-  if (!rootResource) throw new Error('❌ Recurso raiz não encontrado!')
+  if (!rootResource?.id) {
+    throw new Error('❌ Recurso raiz não encontrado!')
+  }
 
   for (const route of API_ROUTES) {
     const existingRoute = resources.items?.find(
@@ -61,11 +73,17 @@ async function main() {
       })
     )
 
+    if (!createResource.id) {
+      throw new Error(
+        `❌ ID do recurso para rota "${route.path}" não encontrado.`
+      )
+    }
+
     // Adiciona método GET
     await apigateway.send(
       new PutMethodCommand({
         restApiId,
-        resourceId: createResource.id!,
+        resourceId: createResource.id,
         httpMethod: route.method,
         authorizationType: 'NONE'
       })
@@ -75,7 +93,7 @@ async function main() {
     await apigateway.send(
       new PutIntegrationCommand({
         restApiId,
-        resourceId: createResource.id!,
+        resourceId: createResource.id,
         httpMethod: route.method,
         type: 'AWS_PROXY',
         integrationHttpMethod: 'POST',

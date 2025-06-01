@@ -1,5 +1,11 @@
-import { extractNameFromUrl, matchByRegex } from './selectors'
-import { lambda, sqs, s3, dynamodb, apigateway } from './localstack/aws-config'
+import { extractNameFromUrl, matchByRegex } from '../selectors'
+import {
+  lambda,
+  sqs,
+  s3,
+  dynamodb,
+  apigateway
+} from '../../localstack/aws-config'
 
 import {
   ListFunctionsCommand,

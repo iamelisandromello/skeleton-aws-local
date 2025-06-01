@@ -1,6 +1,6 @@
 import { variables } from '../src/main/variables'
 
-export const servicesToCheck = {
+export const checkIsEnabled = {
   s3: variables.checkLocalStackS3,
   sqs: variables.checkLocalStackSqs,
   lambda: variables.checkLocalStackLambda,

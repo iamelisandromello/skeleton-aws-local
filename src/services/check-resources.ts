@@ -1,6 +1,4 @@
 // Check Resources Version: v0.1.3
-import inquirer from 'inquirer'
-import { servicesToCheck } from '../localstack/localstack-config'
 import {
   checkS3,
   checkSQS,
@@ -10,21 +8,24 @@ import {
   checkCloudWatch,
   checkSNS,
   checkKinesis
-} from './service-checkers'
+} from './tasks/checkers-task'
+import { checkIsEnabled } from '../../localstack/localstack-config'
+
+import inquirer from 'inquirer'
 
 async function checkResources() {
   console.log('🔍 Selecione o recurso do LocalStack para verificar:')
 
   // Monta as opções do menu com base nos serviços ativados
   const choices = []
-  if (servicesToCheck.s3) choices.push('S3')
-  if (servicesToCheck.sqs) choices.push('SQS')
-  if (servicesToCheck.lambda) choices.push('Lambda')
-  if (servicesToCheck.apigateway) choices.push('API Gateway')
-  if (servicesToCheck.dynamodb) choices.push('DynamoDB')
-  if (servicesToCheck.cloudwatch) choices.push('CloudWatch')
-  if (servicesToCheck.sns) choices.push('SNS')
-  if (servicesToCheck.kinesis) choices.push('Kinesis')
+  if (checkIsEnabled.s3) choices.push('S3')
+  if (checkIsEnabled.sqs) choices.push('SQS')
+  if (checkIsEnabled.lambda) choices.push('Lambda')
+  if (checkIsEnabled.apigateway) choices.push('API Gateway')
+  if (checkIsEnabled.dynamodb) choices.push('DynamoDB')
+  if (checkIsEnabled.cloudwatch) choices.push('CloudWatch')
+  if (checkIsEnabled.sns) choices.push('SNS')
+  if (checkIsEnabled.kinesis) choices.push('Kinesis')
 
   choices.push(new inquirer.Separator())
   choices.push('Sair')

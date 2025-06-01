@@ -9,7 +9,12 @@ import {
   CreateEventSourceMappingCommand
 } from '@aws-sdk/client-lambda'
 
-import { SQS_QUEUE_NAME, LAMBDA_NAME, lambda, sqs } from './aws-config'
+import {
+  SQS_QUEUE_NAME,
+  LAMBDA_NAME,
+  lambda,
+  sqs
+} from '../../localstack/aws-config'
 
 export async function createQueue() {
   const queueName = SQS_QUEUE_NAME

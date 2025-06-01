@@ -1,4 +1,4 @@
-import { LAMBDA_NAME, lambda } from './aws-config'
+import { LAMBDA_NAME, lambda } from '../../localstack/aws-config'
 
 import { InvokeCommand } from '@aws-sdk/client-lambda'
 

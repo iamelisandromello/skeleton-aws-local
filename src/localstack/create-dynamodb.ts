@@ -1,4 +1,4 @@
-import { dynamodb } from './aws-config'
+import { dynamodb } from '../../localstack/aws-config'
 
 import {
   CreateTableCommand,

@@ -20,7 +20,9 @@ async function run() {
         process.exit(1)
       }
 
-      const { default: packageLambda } = await import('../src/package-lambda')
+      const { default: packageLambda } = await import(
+        '../src/services/package-lambda'
+      )
       await packageLambda(distDir, nodeModulesDir, outputZip)
       break
     }
@@ -41,20 +43,26 @@ async function run() {
       }
 
       const { default: provisionResources } = await import(
-        '../src/provision-resources'
+        '../src/services/provision-resources'
       )
       await provisionResources(zipPath)
       break
     }
 
     case 'check': {
-      const checkScript = resolve(__dirname, '../scripts/check-resources.js')
+      const checkScript = resolve(
+        __dirname,
+        '../src/services/check-resources.js'
+      )
       execSync(`node ${checkScript}`, { stdio: 'inherit', env: process.env })
       break
     }
 
     case 'manage': {
-      const manageScript = resolve(__dirname, '../scripts/manage-resources.js')
+      const manageScript = resolve(
+        __dirname,
+        '../services/src/manage-resources.js'
+      )
       execSync(`node ${manageScript}`, { stdio: 'inherit', env: process.env })
       break
     }

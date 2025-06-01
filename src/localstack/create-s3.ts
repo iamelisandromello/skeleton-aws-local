@@ -1,4 +1,9 @@
-import { s3, lambda, LAMBDA_NAME, BUCKET_NAME } from './aws-config'
+import {
+  s3,
+  lambda,
+  LAMBDA_NAME,
+  BUCKET_NAME
+} from '../../localstack/aws-config'
 
 import {
   CreateBucketCommand,

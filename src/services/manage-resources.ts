@@ -6,7 +6,7 @@ import {
   deleteRestApisByFilter,
   deleteLambdaFunctionsByFilter,
   deleteApiGatewayRoutesByFilter
-} from './resource-deleters'
+} from './deleters-resources'
 
 async function main() {
   console.log('🧹 Gerenciador de recursos AWS - CLI\n')

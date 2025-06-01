@@ -1,4 +1,4 @@
-import { lambda, LAMBDA_NAME } from './aws-config'
+import { lambda, LAMBDA_NAME } from '../../localstack/aws-config'
 
 import fs from 'node:fs'
 import path from 'node:path'

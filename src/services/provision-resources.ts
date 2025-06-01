@@ -3,7 +3,10 @@ import * as path from 'node:path'
 import { existsSync } from 'node:fs'
 
 export default async function provisionResources(lambdaZipPath: string) {
-  const scriptPath = path.resolve(__dirname, '../localstack/init-resources.sh')
+  const scriptPath = path.resolve(
+    __dirname,
+    '../../localstack/init-resources.sh'
+  )
 
   console.log('🧭 __dirname:', __dirname)
   console.log('🧭 process.cwd():', process.cwd())
