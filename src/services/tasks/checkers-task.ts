@@ -1,4 +1,7 @@
 // cli/services/tasks/checkers-task.ts
+import { logError, logResult } from '../../logers/logs'
+import { localConfig } from '../../../localstack/aws-config'
+
 import {
   DynamoDBClient,
   ListTablesCommand,
@@ -13,8 +16,6 @@ import {
   CloudWatchLogsClient,
   DescribeLogGroupsCommand
 } from '@aws-sdk/client-cloudwatch-logs'
-import { logError, logResult } from '../../logers/logs'
-import { localConfig } from '../../../localstack/aws-config'
 import { S3Client, ListBucketsCommand } from '@aws-sdk/client-s3'
 import { SQSClient, ListQueuesCommand } from '@aws-sdk/client-sqs'
 import { SNSClient, ListTopicsCommand } from '@aws-sdk/client-sns'
