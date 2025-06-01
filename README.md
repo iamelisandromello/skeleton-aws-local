@@ -1,4 +1,4 @@
-# SkeletonLocalStack
+# SkeletonAWSLocal
 
 ![Version](https://img.shields.io/badge/version-0.5.2-blue)
 ![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-green)
@@ -20,23 +20,28 @@
 │   ├── bin/                    
 │   ├── localstack/             
 │   └── scripts/                
-├── localstack/                 
-│   ├── init-resources.sh       # Inicialização dos recursos do LocalStack
-│   └── localstack-config.ts    # Configurações do Skeleton Local Stack
-├── scripts/                    
-│   ├── check-resources.ts      # Verifica os recursos disponíveis no LocalStack
-│   ├── manage-resources.ts     # Gerencia exclusão de recursos no LocalStack
-│   ├── package-lambda.ts       # Encapsula o diretório dist do projeto consumer para o lambda.zip
-│   ├── provision-resources.ts  # Provisionamento dos recursos a partir do lambda.zip
-│   ├── resources-deleters.sh   # Exclui recursos setados para exclusão
-│   ├── selectors.ts /          # Seletor de recursos a serem excluídos
-│   └── localstack              # Scripts de criação de recursos AWS simulados
-│     ├── aws-config.ts         
+├── localstack/  
+│   ├── aws-config.ts             # Configurações e credenciais AWS                
+│   ├── init-resources.sh         # Inicialização dos recursos do LocalStack
+│   └── localstack-config.ts      # Configurações do Skeleton Local Stack
+├── src/                    
+│   └── services                  # Serviços de gerenciamento dos recursos Localstack
+│     ├── check-resources.ts      # Verifica os recursos disponíveis no LocalStack
+│     ├── deleters-resources.sh   # Exclui recursos setados para exclusão
+│     ├── manage-resources.ts     # Gerencia exclusão de recursos no LocalStack
+│     ├── package-lambda-run.ts   # Serviço de chamada do encapsulamento para Lambda.zip
+│     ├── package-lambda.ts       # Encapsula o diretório dist do projeto consumer para o lambda.zip
+│     ├── provision-resources.ts  # Provisionamento dos recursos a partir do lambda.zip
+│     ├── selectors.ts /          # Seletor de recursos a serem excluídos
+│     └── tasks                   # Serviços de gerenciamento dos recursos Localstack
+│       └── checkers-task.ts      # Tarea de apoio do serviço de verificação dos recursos
+│   └── localstack                # Scripts de criação de recursos AWS simulados    
 │     ├── create-api-gateway.ts 
 │     ├── create-dynamodb.ts    
 │     ├── create-lambda.ts      
-│     ├── create-s3.ts          
-│     └── create-sqs.ts         
+│     ├── create-s3.ts 
+│     ├── create-sqs.ts           
+│     └── invoke-lambda.ts         
 ├── tests/                      # Testes automatizados
 ├── docs/                       # Documentação do projeto
 ├── .vscode/                    # Configurações do VS Code
@@ -225,7 +230,7 @@ Este CLI **apaga recursos**. Use com cautela, especialmente fora de ambientes de
 
 **Elisandro M Correa**  
 📧 iamelicorrea@gmail.com  
-🔗 [github.com/iamelisandromello/localstack-template](https://github.com/iamelisandromello/localstack-template)
+🔗 [github.com/iamelisandromello/skeleton-aws-local](https://github.com/iamelisandromello/skeleton-aws-local)
 
 ---
 
