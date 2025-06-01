@@ -1,4 +1,5 @@
-import { extractNameFromUrl, matchByRegex } from '../selectors'
+// deleters-resources.ts
+import { extractNameFromUrl } from '../selectors'
 import {
   lambda,
   sqs,
@@ -16,12 +17,9 @@ import { ListBucketsCommand, DeleteBucketCommand } from '@aws-sdk/client-s3'
 import { ListTablesCommand, DeleteTableCommand } from '@aws-sdk/client-dynamodb'
 import {
   GetRestApisCommand,
-  DeleteRestApiCommand
-} from '@aws-sdk/client-api-gateway'
-import {
+  DeleteRestApiCommand,
   DeleteResourceCommand,
-  GetResourcesCommand,
-  APIGatewayClient
+  GetResourcesCommand
 } from '@aws-sdk/client-api-gateway'
 
 // Lambda
@@ -32,10 +30,11 @@ export async function deleteLambdaFunctionsByFilter(pattern: RegExp) {
   )
 
   for (const fn of matches) {
-    await lambda.send(
-      new DeleteFunctionCommand({ FunctionName: fn.FunctionName! })
-    )
-    console.log(`🧨 Lambda excluída: ${fn.FunctionName}`)
+    const functionName = fn.FunctionName
+    if (!functionName) continue
+
+    await lambda.send(new DeleteFunctionCommand({ FunctionName: functionName }))
+    console.log(`🧨 Lambda excluída: ${functionName}`)
   }
 }
 
@@ -59,8 +58,11 @@ export async function deleteBucketsByFilter(pattern: RegExp) {
   )
 
   for (const bucket of filtered) {
-    await s3.send(new DeleteBucketCommand({ Bucket: bucket.Name! }))
-    console.log(`🪣 Bucket S3 excluído: ${bucket.Name}`)
+    const bucketName = bucket.Name
+    if (!bucketName) continue
+
+    await s3.send(new DeleteBucketCommand({ Bucket: bucketName }))
+    console.log(`🪣 Bucket S3 excluído: ${bucketName}`)
   }
 }
 
@@ -81,8 +83,11 @@ export async function deleteRestApisByFilter(pattern: RegExp) {
   const filtered = (items ?? []).filter((api) => pattern.test(api.name ?? ''))
 
   for (const api of filtered) {
-    await apigateway.send(new DeleteRestApiCommand({ restApiId: api.id! }))
-    console.log(`🌐 API Gateway excluída: ${api.name} (${api.id})`)
+    const restApiId = api.id
+    if (!restApiId) continue
+
+    await apigateway.send(new DeleteRestApiCommand({ restApiId }))
+    console.log(`🌐 API Gateway excluída: ${api.name} (${restApiId})`)
   }
 }
 
@@ -103,6 +108,7 @@ export async function deleteApiGatewayRoutesByFilter(
   for (const resource of matching) {
     const resourceId = resource.id
     if (!resourceId) continue
+
     console.log(`🗑️  Deletando rota ${resource.path} (id=${resourceId})...`)
     await apigateway.send(
       new DeleteResourceCommand({

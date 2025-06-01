@@ -1,6 +1,6 @@
-import { spawn } from 'node:child_process'
 import * as path from 'node:path'
 import { existsSync } from 'node:fs'
+import { spawn } from 'node:child_process'
 
 export default async function provisionResources(lambdaZipPath: string) {
   const scriptPath = path.resolve(

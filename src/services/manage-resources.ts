@@ -1,4 +1,3 @@
-import inquirer from 'inquirer'
 import {
   deleteTablesByFilter,
   deleteQueuesByFilter,
@@ -7,6 +6,8 @@ import {
   deleteLambdaFunctionsByFilter,
   deleteApiGatewayRoutesByFilter
 } from './deleters-resources'
+
+import inquirer from 'inquirer'
 
 async function main() {
   console.log('🧹 Gerenciador de recursos AWS - CLI\n')
