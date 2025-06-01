@@ -1,0 +1,10 @@
+.env
+node_modules
+package-lock.json
+dist
+coverage
+yarn.lock
+.vscode/launch.json
+**/*.DS_Store
+docs/pipeline.md
+localstack/lambda.zip
