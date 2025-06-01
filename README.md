@@ -15,8 +15,8 @@
 ```
 .
 ├── bin/
-│   ├── cli.ts/                 # CLI de comandos do template
-├── dist/                       # Arquivos transpilados após build
+│   ├── cli.ts/                   # CLI de comandos do template
+├── dist/                         # Arquivos transpilados após build
 │   ├── bin/                    
 │   ├── localstack/             
 │   └── scripts/                
@@ -25,36 +25,39 @@
 │   ├── init-resources.sh         # Inicialização dos recursos do LocalStack
 │   └── localstack-config.ts      # Configurações do Skeleton Local Stack
 ├── src/                    
-│   └── services                  # Serviços de gerenciamento dos recursos Localstack
-│     ├── check-resources.ts      # Verifica os recursos disponíveis no LocalStack
-│     ├── deleters-resources.sh   # Exclui recursos setados para exclusão
-│     ├── manage-resources.ts     # Gerencia exclusão de recursos no LocalStack
-│     ├── package-lambda-run.ts   # Serviço de chamada do encapsulamento para Lambda.zip
-│     ├── package-lambda.ts       # Encapsula o diretório dist do projeto consumer para o lambda.zip
-│     ├── provision-resources.ts  # Provisionamento dos recursos a partir do lambda.zip
-│     ├── selectors.ts /          # Seletor de recursos a serem excluídos
-│     └── tasks                   # Serviços de gerenciamento dos recursos Localstack
-│       └── checkers-task.ts      # Tarea de apoio do serviço de verificação dos recursos
-│   └── localstack                # Scripts de criação de recursos AWS simulados    
+│   └── services/                       # Serviços de gerenciamento dos recursos Localstack
+│     ├── check-resources.ts            # Verifica os recursos disponíveis no LocalStack
+│     ├── deleters-resources.sh         # Exclui recursos setados para exclusão
+│     ├── manage-resources.ts           # Gerencia exclusão de recursos no LocalStack
+│     ├── package-lambda-run.ts         # Serviço de chamada do encapsulamento para Lambda.zip
+│     ├── package-lambda.ts             # Encapsula o diretório dist do projeto consumer para o lambda.zip
+│     ├── provision-resources.ts        # Provisionamento dos recursos a partir do lambda.zip
+│     ├── selectors.ts                  # Seletor de recursos a serem excluídos
+│     └── tasks/                        # Serviços de gerenciamento dos recursos Localstack
+│       ├── checkers-task.ts            # Tarefa de apoio do serviço de verificação dos recursos
+│       └── deleters-selectors-task.ts  # Tarefa de apoio do serviço de deleção de recursos
+│   └── localstack                      # Scripts de criação de recursos AWS simulados    
 │     ├── create-api-gateway.ts 
 │     ├── create-dynamodb.ts    
 │     ├── create-lambda.ts      
 │     ├── create-s3.ts 
 │     ├── create-sqs.ts           
-│     └── invoke-lambda.ts         
-├── tests/                      # Testes automatizados
-├── docs/                       # Documentação do projeto
-├── .vscode/                    # Configurações do VS Code
-├── node_modules/               # Dependências do projeto
-├── .env                        # Variáveis de ambiente
-├── .env.example                # Exemplo de variáveis de ambiente
-├── .editorconfig               # Configurações do editor
-├── .gitignore                  # Arquivos ignorados pelo Git
-├── biome.json                  # Configuração do Biome (formatação e linting)
-├── jest.config.js              # Configuração do Jest
-├── package.json                # Dependências e scripts
-├── tsconfig.json               # Configuração do TypeScript
-└── tsconfig-build.json         # Configuração de build do TypeScript
+│     └── invoke-lambda.ts     
+│   └── logers                    # Abstração para centralizar a construção de logs   
+│     └── logs.ts       
+├── tests/                        # Testes automatizados
+├── docs/                         # Documentação do projeto
+├── .vscode/                      # Configurações do VS Code
+├── node_modules/                 # Dependências do projeto
+├── .env                          # Variáveis de ambiente
+├── .env.example                  # Exemplo de variáveis de ambiente
+├── .editorconfig                 # Configurações do editor
+├── .gitignore                    # Arquivos ignorados pelo Git
+├── biome.json                    # Configuração do Biome (formatação e linting)
+├── jest.config.js                # Configuração do Jest
+├── package.json                  # Dependências e scripts
+├── tsconfig.json                 # Configuração do TypeScript
+└── tsconfig-build.json           # Configuração de build do TypeScript
 ```
 
 ---
