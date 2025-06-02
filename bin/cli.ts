@@ -61,7 +61,7 @@ async function run() {
     case 'manage': {
       const manageScript = resolve(
         __dirname,
-        '../services/src/manage-resources.js'
+        '../src/services/manage-resources.js'
       )
       execSync(`node ${manageScript}`, { stdio: 'inherit', env: process.env })
       break
