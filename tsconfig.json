@@ -2,13 +2,13 @@
 	"compilerOptions": {
 		"target": "es2021",
 		"module": "commonjs",
-		"moduleResolution": "node",
-		"declaration": true,
 		"outDir": "dist",
 		"rootDir": ".",
+		"moduleResolution": "node",
 		"strict": true,
-		"esModuleInterop": true,
+		"declaration": true,
 		"skipLibCheck": true,
+		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true
 	},
 	"include": ["src/**/*.ts", "localstack/**/*.ts", "bin/**/*.ts"],
