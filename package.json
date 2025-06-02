@@ -6,7 +6,7 @@
 	"main": "index.js",
 	"publishConfig": {
 		"access": "public"
-	}
+	},
 	"bin": {
 		"skeleton-aws-local": "./dist/bin/cli.js"
 	},
