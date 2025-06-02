@@ -19,11 +19,26 @@ jobs:
           node-version: 20
           registry-url: 'https://registry.npmjs.org/'
 
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org/'
+          always-auth: true
+          scope: '@iamelicorrea'
+          token: ${{ secrets.NPM_TOKEN }}
+
       - name: 📦 Instalar dependências
         run: npm install
 
       - name: 📝 Criar .npmrc com token
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
+      - name: 🐛 Verificar conteúdo do .npmrc
+        run: cat ~/.npmrc
+      
+      - name: 🔍 Verificar identidade com npm
+        run: npm whoami        
 
       - name: 🧪 Verificar autenticação com NPM
         run: |
