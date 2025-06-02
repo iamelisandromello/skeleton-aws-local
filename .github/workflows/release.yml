@@ -13,49 +13,29 @@ jobs:
       - name: 🔄 Checkout do código
         uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: 'https://registry.npmjs.org/'
-
-      - name: ⚙️ Setup Node.js
+      - name: ⚙️ Setup Node.js e autenticação NPM
         uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org/'
           always-auth: true
-          scope: '@iamelicorrea'
           token: ${{ secrets.NPM_TOKEN }}
 
       - name: 📦 Instalar dependências
-        run: npm install
+        run: npm ci
 
-      - name: 📝 Criar .npmrc com token
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-
-      - name: 🐛 Verificar conteúdo do .npmrc
-        run: cat ~/.npmrc
-      
-      - name: 🔍 Verificar identidade com npm
-        run: npm whoami        
-
-      - name: 🧪 Verificar autenticação com NPM
+      - name: 🔐 Configurar .npmrc com token
         run: |
-          echo "Verificando identidade com npm..."
-          npm whoami || (echo "❌ Falha na autenticação com o NPM" && exit 1)
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          echo "Conteúdo do .npmrc:"
+          cat ~/.npmrc
+          echo "Verificando autenticação com npm whoami..."
+          npm whoami || echo "Falha ao autenticar no NPM, confira o token"
 
-      - name: 🔍 Debug para verificar escopo e publishConfig
-        run: |
-          echo "Nome do pacote:"
-          node -p "require('./package.json').name"
-          echo "Configuração de publicação:"
-          node -p "require('./package.json').publishConfig"
-
-      - name: 🚀 Rodar release com semantic-release
+      - name: 🚀 Rodar semantic-release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          echo "Iniciando semantic-release..."
-          npx semantic-release || (echo "❌ Falha no semantic-release" && exit 1)
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_USERCONFIG: ~/.npmrc
+        run: npx semantic-release
