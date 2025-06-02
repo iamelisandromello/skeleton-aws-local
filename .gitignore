@@ -9,3 +9,4 @@ yarn.lock
 docs/pipeline.md
 localstack/lambda.zip
 src/localstack/lambda.zip
+.npmrc
