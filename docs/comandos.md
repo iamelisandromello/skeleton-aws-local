@@ -39,3 +39,6 @@ Exemplo 1: Excluir Lambda "MinhaLambdaDeVerdade"
 Excluir API Gateway
 ? Qual tipo de recurso deseja deletar? › APIGateway
 ? Informe um padrão para filtrar (Regex ou nome exato): › HelloAPI
+
+
+GH_TOKEN=XXX NPM_TOKEN=XXX npx semantic-release --dry-run

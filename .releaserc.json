@@ -6,6 +6,8 @@
 			{
 				"preset": "conventionalcommits",
 				"releaseRules": [
+					{ "type": "🚀 feat", "release": "minor" },
+					{ "type": "🔧 fix", "release": "patch" },
 					{ "type": "refactor", "release": "patch" },
 					{ "type": "chore", "release": "patch" },
 					{ "scope": "no-release", "release": false }
