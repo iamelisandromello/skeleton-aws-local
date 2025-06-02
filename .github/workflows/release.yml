@@ -20,7 +20,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
 
       - name: 📦 Instalar dependências
-        run: npm ci
+        run: npm install
 
       - name: 📝 Criar .npmrc com token
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
