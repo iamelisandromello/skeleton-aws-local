@@ -14,6 +14,9 @@
 ## 📁 Estrutura do Projeto
 ```
 .
+├── .github/
+│   └── workflows                 # Pipeline GitHub Actions   
+│     └── release.yml       
 ├── bin/
 │   ├── cli.ts/                   # CLI de comandos do template
 ├── dist/                         # Arquivos transpilados após build
