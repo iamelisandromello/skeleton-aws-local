@@ -32,6 +32,17 @@ jobs:
           echo "Verificando autenticação com npm whoami..."
           npm whoami || echo "Falha ao autenticar no NPM, confira o token"
 
+      - name: 🛠️ Configurar autenticação do Git para usar GH_TOKEN
+        run: |
+          git config --global user.name "semantic-release-bot"
+          git config --global user.email "semantic-release@users.noreply.github.com"
+          git remote set-url origin https://${GH_TOKEN}@github.com/${{ github.repository }}.git
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      
+      - name: ✅ Verificar remote configurado
+        run: git remote -v
+  
       - name: 🚀 Rodar semantic-release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
