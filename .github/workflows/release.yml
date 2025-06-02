@@ -4,42 +4,43 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
-
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout código
+      - name: 🔄 Checkout do código
         uses: actions/checkout@v4
 
-      - name: Configurar Node.js
+      - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: https://registry.npmjs.org/
-          scope: '@iamelicorrea'
+          registry-url: 'https://registry.npmjs.org/'
 
-      - name: Configurar token npm
+      - name: 📦 Instalar dependências
+        run: npm ci
+
+      - name: 📝 Criar .npmrc com token
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
-      - name: Install dependencies
-        run: npm install
+      - name: 🧪 Verificar autenticação com NPM
+        run: |
+          echo "Verificando identidade com npm..."
+          npm whoami || (echo "❌ Falha na autenticação com o NPM" && exit 1)
 
-      - name: Buildar projeto
-        run: npm run build
+      - name: 🔍 Debug para verificar escopo e publishConfig
+        run: |
+          echo "Nome do pacote:"
+          node -p "require('./package.json').name"
+          echo "Configuração de publicação:"
+          node -p "require('./package.json').publishConfig"
 
-      - name: Testar login npm (debug)
-        run: npm whoami
-
-      - name: Publicar release com Semantic Release
+      - name: 🚀 Rodar release com semantic-release
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+        run: |
+          echo "Iniciando semantic-release..."
+          npx semantic-release || (echo "❌ Falha no semantic-release" && exit 1)
