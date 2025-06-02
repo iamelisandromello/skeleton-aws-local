@@ -32,6 +32,12 @@ jobs:
           echo "Verificando autenticação com npm whoami..."
           npm whoami || echo "Falha ao autenticar no NPM, confira o token"
 
+      - name: Testar autenticação GitHub com GH_TOKEN
+        run: |
+          curl -H "Authorization: token $GH_TOKEN" https://api.github.com/user/repos
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}          
+
       - name: 🛠️ Configurar autenticação do Git para usar GH_TOKEN
         run: |
           git config --global user.name "semantic-release-bot"
