@@ -22,7 +22,7 @@ jobs:
           token: ${{ secrets.NPM_TOKEN }}
 
       - name: 📦 Instalar dependências
-        run: npm ci
+        run: npm install
 
       - name: 🔐 Configurar .npmrc com token
         run: |
