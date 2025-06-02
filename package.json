@@ -1,6 +1,6 @@
 {
 	"author": "Elisandro M Correa",
-	"name": "@iamelicorrea/skeleton-aws-local",
+	"name": "skeleton-aws-local",
 	"description": "SkeletonAWSLocal Library developed in TypeScript to abstract the use of the Localsctack framework to make cloud resources available locally",
 	"version": "0.1.0",
 	"main": "index.js",
@@ -71,5 +71,9 @@
 		"ts-jest": "^29.3.2",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.8.3"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/iamelisandromello/skeleton-aws-local.git"
 	}
 }
