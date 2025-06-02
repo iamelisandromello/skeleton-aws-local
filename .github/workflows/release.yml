@@ -1,10 +1,10 @@
 name: Release
 
 on:
-    push:
-      branches:
-        - main
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -24,12 +24,19 @@ jobs:
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
+          scope: '@iamelicorrea'
+
+      - name: Configurar token npm
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
       - name: Install dependencies
         run: npm install
 
       - name: Buildar projeto
         run: npm run build
+
+      - name: Testar login npm (debug)
+        run: npm whoami
 
       - name: Publicar release com Semantic Release
         env:
