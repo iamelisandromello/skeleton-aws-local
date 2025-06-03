@@ -39,6 +39,9 @@ jobs:
       - name: ⚙️ Corrigir permissões do diretório ~/.npm
         run: sudo chown -R $USER:$GROUP ~/.npm
 
+      - name: 🛠️ Build do projeto
+        run: npm run build
+
       - name: 🔐 Configurar Git com GH_TOKEN
         run: |
           git config --global user.name "semantic-release-bot"
