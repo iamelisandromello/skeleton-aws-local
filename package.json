@@ -20,11 +20,7 @@
 	],
 	"license": "MIT",
 	"type": "commonjs",
-	"files": [
-		"dist",
-		"bin",
-		"localstack"
-	],
+	"files": ["dist", "bin", "localstack"],
 	"scripts": {
 		"check": "npm-check -s -u",
 		"clean": "rimraf dist",
@@ -35,11 +31,11 @@
 		"build:ts": "tsc -p tsconfig-build.json",
 		"copy:extras": "mkdir -p dist/localstack && cp -r localstack/*.sh dist/localstack/",
 		"package:local": "ts-node --files src/services/package-lambda-run.ts",
-		"provision:local": "node --env-file=.env -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip",
 		"build:local": "npm run clean && tsc -p tsconfig-build.json && npm run package:local",
-		"dev:local": "npm run build:local && node -r ts-node/register --env-file=.env bin/cli.ts provision ./localstack/lambda.zip",
-		"manage:local": "node --env-file=.env -r ts-node/register  src/services/manage-resources.ts",
-		"check:local": "node --env-file=.env -r ts-node/register src/services/check-resources.ts"
+		"provision:local": "node -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip",
+		"dev:local": "npm run build:local && node -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip",
+		"manage:local": "node -r ts-node/register src/services/manage-resources.ts",
+		"check:local": "node -r ts-node/register src/services/check-resources.ts"
 	},
 	"dependencies": {
 		"@aws-sdk/client-api-gateway": "^3.817.0",

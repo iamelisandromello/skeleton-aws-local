@@ -1,9 +1,12 @@
 #!/usr/bin/env node
-// CLI Version: v0.5.2
+// CLI Version: v0.6.0
+import { loadEnvFromConsumer } from '../src/main/load-env'
 
 import { resolve } from 'node:path'
 import { existsSync } from 'node:fs'
 import { execSync } from 'node:child_process'
+
+loadEnvFromConsumer()
 
 const [, , command, ...args] = process.argv
 
