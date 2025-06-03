@@ -232,6 +232,48 @@ Este CLI **apaga recursos**. Use com cautela, especialmente fora de ambientes de
 
 ---
 
+## 🌐  Variáveis de Ambiente
+
+Para que o projeto funcione corretamente com o LocalStack, é necessário configurar algumas variáveis de ambiente. Crie um arquivo .env na raiz do projeto com base no arquivo .env.example, que já contém os nomes das variáveis esperadas.
+
+```env
+TZ="UTC"
+AWS_REGION="us-east-1"
+AWS_ACCESS_KEY_ID="test"
+AWS_SECRET_ACCESS_KEY="test"
+LAMBDA_NAME="meu-lambda"
+API_NAME="meu-api-gateway"
+CORS_ORIGIN_PERMISSION="*"
+BUCKET_NAME="meu-unico-bucket-s3"
+SQS_QUEUE_NAME="skeleton-local-stack-queue"
+EXAMPLE_QUEUE_URL="https://sqs.us-east-1.amazonaws.com/000000000000/skeleton-pub-queue"
+LOCALSTACK_ENDPOINT="http://localhost:4566"
+
+CHECK_LOCALSTACK_S3=true
+CHECK_LOCALSTACK_SQS=true
+CHECK_LOCALSTACK_SNS=false
+CHECK_LOCALSTACK_LAMBDA=true
+CHECK_LOCALSTACK_DYNAMODB=true
+CHECK_LOCALSTACK_KINESIS=false
+CHECK_LOCALSTACK_APIGATEWAY=true
+CHECK_LOCALSTACK_CLOUDWATCH=false
+
+API_ROUTES=[{"path":"/load","method":"GET"},{"path":"/create","method":"POST"},{"path":"/logout","method":"POST"}]
+
+```
+
+## 📌 Observações
+
+Nunca adicione o arquivo `.env` ao Git. Ele deve estar no `.gitignore` para evitar exposição acidental de dados sensíveis, mesmo em ambiente local.
+
+O `.env.example` serve como referência e não deve conter valores sensíveis reais.
+
+Os valores fornecidos no `.env.example` são genéricos e compatíveis com o LocalStack. Eles podem ser usados como padrão caso você deseje inicializar rapidamente o projeto.
+
+
+
+---
+
 ## 👤 Autor
 
 **Elisandro M Correa**  
