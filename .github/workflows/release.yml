@@ -1,9 +1,22 @@
-name: Release
+# ──────────────────────────────────────────────────────────────
+# ✅ Histórico de alterações:
+# [2025-06-02] Corrigido erro EACCES em ~/.npm/_logs com chown
+# Adicionados debugs úteis: `npm whoami`, `git remote -v`, `curl GitHub API`
+# Mantido uso de npm install (evita falhas com semantic-release)
+# ──────────────────────────────────────────────────────────────
+
+name: 📦 Release
 
 on:
   push:
     branches:
       - main
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
 
 jobs:
   release:
@@ -32,23 +45,27 @@ jobs:
           echo "Verificando autenticação com npm whoami..."
           npm whoami || echo "Falha ao autenticar no NPM, confira o token"
 
-      - name: Testar autenticação GitHub com GH_TOKEN
+      - name: ⚙️ Corrigir permissões do diretório ~/.npm
+        run: sudo chown -R $USER:$GROUP ~/.npm
+
+      - name: 🔐 Testar autenticação GitHub com GH_TOKEN
         run: |
+          echo "Verificando autenticação via GitHub API com curl..."
           curl -H "Authorization: token $GH_TOKEN" https://api.github.com/user/repos
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}          
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: 🛠️ Configurar autenticação do Git para usar GH_TOKEN
+      - name: 🛠️ Configurar autenticação do Git com GH_TOKEN
         run: |
           git config --global user.name "semantic-release-bot"
           git config --global user.email "semantic-release@users.noreply.github.com"
           git remote set-url origin https://${GH_TOKEN}@github.com/${{ github.repository }}.git
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      
+
       - name: ✅ Verificar remote configurado
         run: git remote -v
-  
+
       - name: 🚀 Rodar semantic-release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
