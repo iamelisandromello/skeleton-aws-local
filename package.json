@@ -2,7 +2,7 @@
 	"author": "Elisandro M Correa",
 	"name": "skeleton-aws-local",
 	"description": "SkeletonAWSLocal Library developed in TypeScript to abstract the use of the Localsctack framework to make cloud resources available locally",
-	"version": "1.3.0",
+	"version": "1.3.1",
 	"publishConfig": {
 		"access": "public"
 	},
