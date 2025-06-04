@@ -22,7 +22,7 @@ else
   exit 1
 fi
 
-echo "📦 Diretório base do localstack-template: $TEMPLATE_ROOT"
+echo "📦 Diretório base do skeleton-aws-local: $TEMPLATE_ROOT"
 
 if [[ "$SCRIPT_DIR" == */dist/localstack ]]; then
   USE_TS_NODE=false

@@ -24,7 +24,7 @@ console.log('🧩 Executando create-lambda.js')
 console.log('🧩 __dirname:', __dirname)
 console.log('🧩 process.cwd():', process.cwd())
 console.log(
-  '🧩 Esperado: create-lambda.js esteja em localstack-template/dist/scripts/localstack'
+  '🧩 Esperado: create-lambda.js esteja em skeleton-aws-locas/dist/scripts/localstack'
 )
 console.log('🧩 Lendo arquivo ZIP de:', zipFilePath)
 

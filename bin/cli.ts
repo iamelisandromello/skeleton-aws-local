@@ -18,7 +18,7 @@ async function run() {
       if (!distDir || !nodeModulesDir || !outputZip) {
         console.error('❌ Parâmetros insuficientes para o comando `package`.')
         console.log(
-          'Uso correto: localstack-template package <distDir> <nodeModulesDir> <outputZip>'
+          'Uso correto: skeleton-aws-local package <distDir> <nodeModulesDir> <outputZip>'
         )
         process.exit(1)
       }
@@ -35,7 +35,7 @@ async function run() {
 
       if (!lambdaZip) {
         console.error('❌ Caminho do arquivo ZIP da Lambda não informado.')
-        console.log('Uso correto: localstack-template provision <lambdaZip>')
+        console.log('Uso correto: skeleton-aws-local provision <lambdaZip>')
         process.exit(1)
       }
 
@@ -70,6 +70,50 @@ async function run() {
       break
     }
 
+    case 'localstack:up': {
+      const dockerComposePath = resolve(__dirname, '../../docker-compose.yml')
+      if (!existsSync(dockerComposePath)) {
+        console.error(
+          `❌ docker-compose.yml não encontrado em: ${dockerComposePath}`
+        )
+        process.exit(1)
+      }
+
+      try {
+        console.log('🚀 Iniciando o LocalStack via Docker Compose...')
+        execSync(`docker compose -f "${dockerComposePath}" up -d`, {
+          stdio: 'inherit'
+        })
+        console.log('✅ LocalStack iniciado com sucesso.')
+      } catch (err) {
+        console.error('❌ Falha ao iniciar o LocalStack:', err)
+        process.exit(1)
+      }
+      break
+    }
+
+    case 'localstack:down': {
+      const dockerComposePath = resolve(__dirname, '../../docker-compose.yml')
+      if (!existsSync(dockerComposePath)) {
+        console.error(
+          `❌ docker-compose.yml não encontrado em: ${dockerComposePath}`
+        )
+        process.exit(1)
+      }
+
+      try {
+        console.log('🛑 Finalizando o LocalStack...')
+        execSync(`docker compose -f "${dockerComposePath}" down`, {
+          stdio: 'inherit'
+        })
+        console.log('✅ LocalStack encerrado com sucesso.')
+      } catch (err) {
+        console.error('❌ Falha ao derrubar o LocalStack:', err)
+        process.exit(1)
+      }
+      break
+    }
+
     case '--help':
     case '-h': {
       printHelp()
@@ -99,6 +143,12 @@ function printHelp() {
 
   ▶ manage
      Exclui recursos do LocalStack de forma interativa via prompt.
+
+  ▶ localstack:up
+     Realiza o Up do container com localstack. 
+
+  ▶ localstack:down
+     Realiza o Down do container com localstack.     
 
   ▶ --help / -h
      Exibe esta ajuda.
