@@ -36,10 +36,6 @@ export const BUCKET_NAME = variables.bucketName
 export const endpoint = variables.localstackEndpoint
 export const SQS_QUEUE_NAME = variables.sqsQueueName
 
-console.log('AWS_REGION:', variables.awsRegion)
-console.log('REGION:', variables.awsRegion)
-console.log('Const region:', region)
-
 // Exporta os clients AWS SDK v3 configurados para LocalStack
 export const s3 = new S3Client({
   region,

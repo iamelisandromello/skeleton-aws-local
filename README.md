@@ -332,16 +332,14 @@ API_ROUTES=[{"path":"/load","method":"GET"},{"path":"/create","method":"POST"},{
 Não utilize aspas (simples ou duplas) nos valores das variáveis no arquivo .env, pois o dotenv-cli inclui as aspas literalmente durante o parsing, o que pode causar falhas inesperadas.
 <br>Exemplo errado:
 
-```bash
+```env
 AWS_REGION="us-east-1"
 Resultado interpretado: "us-east-1" (com aspas duplas incluídas)
 ```
 
 <br>Exemplo correto:
 
-```bashenv
-Copiar
-Editar
+```env
 AWS_REGION=us-east-1
 ```
 
