@@ -1,6 +1,8 @@
 // cli/services/tasks/checkers-task.ts
-import { logError, logResult } from '../../logers/logs'
+import { logError, logResult, showLocalStackDocsLink } from '../../logers/logs'
 import { localConfig } from '../../../localstack/aws-config'
+
+import http from 'node:http'
 
 import {
   DynamoDBClient,
@@ -136,4 +138,37 @@ export async function checkKinesis() {
   } catch (err) {
     logError('Kinesis', err)
   }
+}
+
+export async function checkLocalStackHealth(): Promise<boolean> {
+  console.log('📡 Verificando saúde do LocalStack...')
+
+  return new Promise((resolve) => {
+    const req = http.get('http://localhost:4566/_localstack/health', (res) => {
+      if (res.statusCode === 200) {
+        console.log('✅ LocalStack está rodando normalmente!\n')
+        resolve(true)
+      } else {
+        console.error(`❌ LocalStack respondeu com status ${res.statusCode}.`)
+        console.info('💡 Verifique se o container está saudável.')
+        showLocalStackDocsLink()
+        resolve(false)
+      }
+    })
+
+    req.on('error', () => {
+      console.error('🛑 Não foi possível conectar ao LocalStack.')
+      console.info(
+        '💡 Certifique-se de que o container está rodando (porta 4566).'
+      )
+      showLocalStackDocsLink()
+      resolve(false)
+    })
+
+    req.setTimeout(10000, () => {
+      console.error('⏱️ Timeout: LocalStack não respondeu a tempo.')
+      showLocalStackDocsLink()
+      resolve(false)
+    })
+  })
 }

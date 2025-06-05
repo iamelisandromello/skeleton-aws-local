@@ -1,4 +1,4 @@
-// Check Resources Version: v0.1.3
+// Check Resources Version: v0.2.0
 import {
   checkS3,
   checkSQS,
@@ -7,16 +7,16 @@ import {
   checkDynamoDB,
   checkCloudWatch,
   checkSNS,
-  checkKinesis
+  checkKinesis,
+  checkLocalStackHealth
 } from './tasks/checkers-task'
 import { checkIsEnabled } from '../../localstack/localstack-config'
 
 import inquirer from 'inquirer'
 
-async function checkResources() {
-  console.log('🔍 Selecione o recurso do LocalStack para verificar:')
+async function showMenu() {
+  console.log('🔍 Selecione o recurso do LocalStack para verificar:\n')
 
-  // Monta as opções do menu com base nos serviços ativados
   const choices = []
   if (checkIsEnabled.s3) choices.push('S3')
   if (checkIsEnabled.sqs) choices.push('SQS')
@@ -31,7 +31,7 @@ async function checkResources() {
   choices.push('Sair')
 
   while (true) {
-    const answers = await inquirer.prompt<{ resource: string }>([
+    const { resource } = await inquirer.prompt<{ resource: string }>([
       {
         type: 'list',
         name: 'resource',
@@ -40,48 +40,67 @@ async function checkResources() {
       }
     ])
 
-    if (answers.resource === 'Sair') {
+    if (resource === 'Sair') {
       console.log('👋 Saindo... Até a próxima!')
       process.exit(0)
     }
 
-    console.log(`\n🔍 Verificando recurso: ${answers.resource}\n`)
+    console.log(`\n🔍 Verificando recurso: ${resource}\n`)
 
-    switch (answers.resource) {
-      case 'S3':
-        await checkS3()
-        break
-      case 'SQS':
-        await checkSQS()
-        break
-      case 'Lambda':
-        await checkLambda()
-        break
-      case 'API Gateway':
-        await checkAPIGateway()
-        break
-      case 'DynamoDB':
-        await checkDynamoDB()
-        break
-      case 'CloudWatch':
-        await checkCloudWatch()
-        break
-      case 'SNS':
-        await checkSNS()
-        break
-      case 'Kinesis':
-        await checkKinesis()
-        break
-      default:
-        console.log('Recurso inválido')
-        break
+    try {
+      switch (resource) {
+        case 'S3':
+          await checkS3()
+          break
+        case 'SQS':
+          await checkSQS()
+          break
+        case 'Lambda':
+          await checkLambda()
+          break
+        case 'API Gateway':
+          await checkAPIGateway()
+          break
+        case 'DynamoDB':
+          await checkDynamoDB()
+          break
+        case 'CloudWatch':
+          await checkCloudWatch()
+          break
+        case 'SNS':
+          await checkSNS()
+          break
+        case 'Kinesis':
+          await checkKinesis()
+          break
+        default:
+          console.warn('⚠️ Recurso inválido.')
+      }
+    } catch (err) {
+      console.error('❌ Erro ao verificar o recurso:', err)
     }
 
     console.log('✅ Verificação concluída.\n')
   }
 }
 
-checkResources().catch((err) => {
-  console.error('❌ Erro inesperado durante a verificação de recursos:', err)
+async function isLocalStackUp(): Promise<boolean> {
+  return await checkLocalStackHealth()
+}
+
+async function main() {
+  console.log('🚦 Verificando status do LocalStack...\n')
+
+  const available = await isLocalStackUp()
+
+  if (!available) {
+    process.exit(1)
+  }
+
+  await showMenu()
+}
+
+main().catch((err) => {
+  console.error('❌ Erro inesperado ao iniciar o verificador:', err)
   process.exit(1)
 })

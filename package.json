@@ -26,7 +26,6 @@
 		"localstack"
 	],
 	"scripts": {
-		"check": "npm-check -s -u",
 		"clean": "rimraf dist",
 		"lint": "npx @biomejs/biome check src",
 		"lint:format": "npx @biomejs/biome check --write src",
@@ -40,10 +39,10 @@
 		"copy:extras": "mkdir -p dist/localstack && cp -r localstack/*.sh dist/localstack/",
 		"package:local": "ts-node --files src/services/package-lambda-run.ts",
 		"build:local": "npm run clean && tsc -p tsconfig-build.json && npm run package:local",
-		"provision:local": "node -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip",
 		"dev:local": "npm run build:local && node -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip",
-		"manage:local": "node -r ts-node/register src/services/manage-resources.ts",
-		"check:local": "node -r ts-node/register src/services/check-resources.ts"
+		"manage:local": "node --env-file=.env -r ts-node/register src/services/manage-resources.ts",
+		"check:local": "node --env-file=.env -r ts-node/register src/services/check-resources.ts",
+		"provision:local": "node --env-file=.env -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip"
 	},
 	"dependencies": {
 		"@aws-sdk/client-api-gateway": "^3.817.0",
@@ -56,7 +55,7 @@
 		"@aws-sdk/client-sqs": "^3.817.0",
 		"archiver": "^7.0.1",
 		"env-var": "^7.5.0",
-		"inquirer": "^12.6.2",
+		"inquirer": "^12.6.3",
 		"module-alias": "^2.2.3",
 		"rimraf": "^6.0.1"
 	},
