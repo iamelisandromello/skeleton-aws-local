@@ -1,5 +1,13 @@
 // scripts/localstack/create-sqs.ts
 import {
+  SQS_QUEUE_NAME,
+  LAMBDA_NAME,
+  lambda,
+  sqs
+} from '../../localstack/aws-config'
+import { ResourcesEnum } from '../main/resources-enum'
+import { shouldProvisionOrExit } from '../services/tasks/should-provision'
+import {
   CreateQueueCommand,
   GetQueueAttributesCommand,
   ListQueuesCommand
@@ -9,14 +17,8 @@ import {
   CreateEventSourceMappingCommand
 } from '@aws-sdk/client-lambda'
 
-import {
-  SQS_QUEUE_NAME,
-  LAMBDA_NAME,
-  lambda,
-  sqs
-} from '../../localstack/aws-config'
-
 export async function createQueue() {
+  shouldProvisionOrExit(ResourcesEnum.LOCALSTACK_SQS)
   const queueName = SQS_QUEUE_NAME
   const lambdaName = LAMBDA_NAME
 
