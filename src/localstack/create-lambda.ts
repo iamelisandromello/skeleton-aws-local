@@ -1,7 +1,8 @@
+import { ResourcesEnum } from '../main/resources-enum'
 import { lambda, LAMBDA_NAME } from '../../localstack/aws-config'
+import { shouldProvisionOrExit } from '../services/tasks/should-provision'
 
 import fs from 'node:fs'
-import path from 'node:path'
 import { CreateFunctionCommand } from '@aws-sdk/client-lambda'
 
 const functionName = LAMBDA_NAME
@@ -29,6 +30,8 @@ console.log(
 console.log('🧩 Lendo arquivo ZIP de:', zipFilePath)
 
 async function createLambda() {
+  shouldProvisionOrExit(ResourcesEnum.LOCALSTACK_LAMBDA)
+
   const zipBuffer = fs.readFileSync(zipFilePath)
 
   try {

@@ -1,4 +1,6 @@
 import { dynamodb } from '../../localstack/aws-config'
+import { ResourcesEnum } from '../main/resources-enum'
+import { shouldProvisionOrExit } from '../services/tasks/should-provision'
 
 import {
   CreateTableCommand,
@@ -7,6 +9,8 @@ import {
 } from '@aws-sdk/client-dynamodb'
 
 async function createDynamoDBTable() {
+  shouldProvisionOrExit(ResourcesEnum.LOCALSTACK_DYNAMODB)
+
   const params: CreateTableCommandInput = {
     TableName: 'Users',
     KeySchema: [{ AttributeName: 'id', KeyType: 'HASH' }],

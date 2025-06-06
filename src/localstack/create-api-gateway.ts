@@ -13,8 +13,11 @@ import {
   API_ROUTES,
   LAMBDA_NAME
 } from '../../localstack/aws-config'
+import { shouldProvisionOrExit } from '../services/tasks/should-provision'
+import { ResourcesEnum } from '../main/resources-enum'
 
 async function main() {
+  shouldProvisionOrExit(ResourcesEnum.LOCALSTACK_APIGATEWAY)
   console.log(`🚀 Verificando se a API "${API_NAME}" já existe...`)
 
   const apis = await apigateway.send(new GetRestApisCommand({ limit: 500 }))

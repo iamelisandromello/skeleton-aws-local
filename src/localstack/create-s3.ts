@@ -4,6 +4,8 @@ import {
   LAMBDA_NAME,
   BUCKET_NAME
 } from '../../localstack/aws-config'
+import { ResourcesEnum } from '../main/resources-enum'
+import { shouldProvisionOrExit } from '../services/tasks/should-provision'
 
 import {
   CreateBucketCommand,
@@ -12,6 +14,8 @@ import {
 import { AddPermissionCommand } from '@aws-sdk/client-lambda'
 
 export async function createBucket() {
+  shouldProvisionOrExit(ResourcesEnum.LOCALSTACK_S3)
+
   try {
     await s3.send(new CreateBucketCommand({ Bucket: BUCKET_NAME }))
     console.log(`✅ Bucket S3 '${BUCKET_NAME}' criado.`)
