@@ -17,17 +17,30 @@ import inquirer from 'inquirer'
 async function showMenu() {
   console.log('🔍 Selecione o recurso do LocalStack para verificar:\n')
 
-  const choices = []
-  if (checkIsEnabled.s3) choices.push('S3')
-  if (checkIsEnabled.sqs) choices.push('SQS')
-  if (checkIsEnabled.lambda) choices.push('Lambda')
-  if (checkIsEnabled.apigateway) choices.push('API Gateway')
-  if (checkIsEnabled.dynamodb) choices.push('DynamoDB')
-  if (checkIsEnabled.cloudwatch) choices.push('CloudWatch')
-  if (checkIsEnabled.sns) choices.push('SNS')
-  if (checkIsEnabled.kinesis) choices.push('Kinesis')
+  const availableResources = []
+  if (checkIsEnabled.s3) availableResources.push('S3')
+  if (checkIsEnabled.sqs) availableResources.push('SQS')
+  if (checkIsEnabled.lambda) availableResources.push('Lambda')
+  if (checkIsEnabled.apigateway) availableResources.push('API Gateway')
+  if (checkIsEnabled.dynamodb) availableResources.push('DynamoDB')
+  if (checkIsEnabled.cloudwatch) availableResources.push('CloudWatch')
+  if (checkIsEnabled.sns) availableResources.push('SNS')
+  if (checkIsEnabled.kinesis) availableResources.push('Kinesis')
 
-  choices.push(new inquirer.Separator())
+  const choices = []
+
+  // Adiciona os recursos disponíveis se houver algum
+  if (availableResources.length > 0) {
+    choices.push(...availableResources)
+    choices.push(new inquirer.Separator()) // Adiciona um separador apenas se houver recursos
+  } else {
+    // Mensagem amigável se nenhum recurso estiver habilitado
+    console.log(
+      '😔 Nenhum recurso do LocalStack está habilitado para verificação.Todos os recursos devem estar desabilitados no seu arquivo .env. Por favor, verifique sua configuração.\n'
+    )
+  }
+
+  // Adiciona a opção "Sair" sempre, independentemente dos recursos habilitados
   choices.push('Sair')
 
   while (true) {
@@ -35,7 +48,7 @@ async function showMenu() {
       {
         type: 'list',
         name: 'resource',
-        message: 'Escolha um recurso para verificar:',
+        message: 'Escolha uma opção:', // Mensagem mais genérica
         choices
       }
     ])
@@ -45,42 +58,50 @@ async function showMenu() {
       process.exit(0)
     }
 
-    console.log(`\n🔍 Verificando recurso: ${resource}\n`)
+    // Somente executa a verificação se um recurso foi de fato selecionado (e não era a opção "Sair")
+    if (availableResources.includes(resource)) {
+      console.log(`\n🔍 Verificando recurso: ${resource}\n`)
 
-    try {
-      switch (resource) {
-        case 'S3':
-          await checkS3()
-          break
-        case 'SQS':
-          await checkSQS()
-          break
-        case 'Lambda':
-          await checkLambda()
-          break
-        case 'API Gateway':
-          await checkAPIGateway()
-          break
-        case 'DynamoDB':
-          await checkDynamoDB()
-          break
-        case 'CloudWatch':
-          await checkCloudWatch()
-          break
-        case 'SNS':
-          await checkSNS()
-          break
-        case 'Kinesis':
-          await checkKinesis()
-          break
-        default:
-          console.warn('⚠️ Recurso inválido.')
+      try {
+        switch (resource) {
+          case 'S3':
+            await checkS3()
+            break
+          case 'SQS':
+            await checkSQS()
+            break
+          case 'Lambda':
+            await checkLambda()
+            break
+          case 'API Gateway':
+            await checkAPIGateway()
+            break
+          case 'DynamoDB':
+            await checkDynamoDB()
+            break
+          case 'CloudWatch':
+            await checkCloudWatch()
+            break
+          case 'SNS':
+            await checkSNS()
+            break
+          case 'Kinesis':
+            await checkKinesis()
+            break
+          default:
+            console.warn('⚠️ Recurso inválido.') // Esta linha pode ser alcançada se a lógica for alterada
+        }
+      } catch (err) {
+        console.error('❌ Erro ao verificar o recurso:', err)
       }
-    } catch (err) {
-      console.error('❌ Erro ao verificar o recurso:', err)
-    }
 
-    console.log('✅ Verificação concluída.\n')
+      console.log('✅ Verificação concluída.\n')
+    } else {
+      // Caso um recurso inválido seja selecionado (improvável com `list` type, mas para robustez)
+      console.warn(
+        '⚠️ Opção inválida. Por favor, escolha uma das opções listadas.\n'
+      )
+    }
   }
 }
 
@@ -94,6 +115,9 @@ async function main() {
   const available = await isLocalStackUp()
 
   if (!available) {
+    console.error(
+      '❌ LocalStack não está em execução. Por favor, inicie o LocalStack e tente novamente.'
+    )
     process.exit(1)
   }
 
