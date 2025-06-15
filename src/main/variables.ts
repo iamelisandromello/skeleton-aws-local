@@ -39,14 +39,14 @@ export const variables = {
   localstackEndpoint: env.get('LOCALSTACK_ENDPOINT').required().asString(),
 
   checkLocalstack: {
-    s3: env.get('LOCALSTACK_S3').required().asBool(),
-    sqs: env.get('LOCALSTACK_SQS').required().asBool(),
-    sns: env.get('LOCALSTACK_SNS').required().asBool(),
-    lambda: env.get('LOCALSTACK_LAMBDA').required().asBool(),
-    dynamodb: env.get('LOCALSTACK_DYNAMODB').required().asBool(),
-    kinesis: env.get('LOCALSTACK_KINESIS').required().asBool(),
-    apigateway: env.get('LOCALSTACK_APIGATEWAY').required().asBool(),
-    cloudwatch: env.get('LOCALSTACK_CLOUDWATCH').required().asBool()
+    s3: env.get('CHECK_LOCALSTACK_S3').required().asBool(),
+    sqs: env.get('CHECK_LOCALSTACK_SQS').required().asBool(),
+    sns: env.get('CHECK_LOCALSTACK_SNS').required().asBool(),
+    lambda: env.get('CHECK_LOCALSTACK_LAMBDA').required().asBool(),
+    dynamodb: env.get('CHECK_LOCALSTACK_DYNAMODB').required().asBool(),
+    kinesis: env.get('CHECK_LOCALSTACK_KINESIS').required().asBool(),
+    apigateway: env.get('CHECK_LOCALSTACK_APIGATEWAY').required().asBool(),
+    cloudwatch: env.get('CHECK_LOCALSTACK_CLOUDWATCH').required().asBool()
   },
 
   apiRoutes: parseApiRoutes()
