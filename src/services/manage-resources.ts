@@ -1,3 +1,5 @@
+import { checkIsEnabled } from '../../localstack/localstack-config'
+
 import {
   deleteTablesByFilter,
   deleteQueuesByFilter,
@@ -15,27 +17,67 @@ async function main() {
   let continuar = true
 
   while (continuar) {
+    // 1. Filtrar os recursos habilitados para exclusão com base em checkIsEnabled
+    const availableDeleteResources = []
+
+    if (checkIsEnabled.lambda)
+      availableDeleteResources.push({ name: 'Lambda', value: 'lambda' })
+    if (checkIsEnabled.sqs)
+      availableDeleteResources.push({ name: 'SQS', value: 'sqs' })
+    if (checkIsEnabled.s3)
+      availableDeleteResources.push({ name: 'S3', value: 's3' })
+    if (checkIsEnabled.dynamodb)
+      availableDeleteResources.push({ name: 'DynamoDB', value: 'dynamodb' })
+    if (checkIsEnabled.apigateway) {
+      availableDeleteResources.push({
+        name: 'API Gateway (REST APIs)',
+        value: 'apigateway'
+      })
+      availableDeleteResources.push({
+        name: 'API Gateway (Rotas)',
+        value: 'apigateway-route'
+      })
+    }
+
+    const choices = []
+
+    if (availableDeleteResources.length > 0) {
+      choices.push(...availableDeleteResources)
+      choices.push(new inquirer.Separator())
+    } else {
+      console.log(
+        '😔 Nenhum tipo de recurso está habilitado para exclusão no momento. Por favor, verifique sua configuração de recursos no LocalStack.'
+      )
+    }
+
+    // Adiciona a opção "Sair" sempre, independentemente dos recursos habilitados
+    choices.push({ name: 'Sair', value: 'exit' })
+
     const { resourceType } = await inquirer.prompt([
       {
         type: 'list',
         name: 'resourceType',
         message: 'Qual recurso deseja excluir?',
-        choices: [
-          { name: 'Lambda', value: 'lambda' },
-          { name: 'SQS', value: 'sqs' },
-          { name: 'S3', value: 's3' },
-          { name: 'DynamoDB', value: 'dynamodb' },
-          { name: 'API Gateway (REST APIs)', value: 'apigateway' },
-          { name: 'API Gateway (Rotas)', value: 'apigateway-route' },
-          new inquirer.Separator(),
-          { name: 'Sair', value: 'exit' }
-        ]
+        choices: choices
       }
     ])
 
     if (resourceType === 'exit') {
       console.log('\n👋 Encerrando o gerenciador de recursos.')
       break
+    }
+
+    // Se não há recursos habilitados e o usuário não escolheu "Sair",
+    // isso só deve acontecer se algo estiver errado na lógica ou se ele forçar.
+    // Com 'list' type, o usuário só pode escolher das opções dadas, então isso é mais uma salvaguarda.
+    const isResourceSelected = availableDeleteResources.some(
+      (res) => res.value === resourceType
+    )
+    if (!isResourceSelected) {
+      console.warn(
+        '⚠️ Opção de recurso inválida ou não habilitada para exclusão. Por favor, escolha uma das opções listadas.\n'
+      )
+      continue // Volta para o início do loop
     }
 
     const { pattern } = await inquirer.prompt([
@@ -78,6 +120,10 @@ async function main() {
           await deleteApiGatewayRoutesByFilter(apiId, regex)
           break
         }
+        default:
+          console.warn(
+            '⚠️ Tipo de recurso inválido ou não suportado para exclusão.'
+          )
       }
 
       console.log('\n✅ Recursos excluídos com sucesso.')
