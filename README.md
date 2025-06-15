@@ -48,7 +48,6 @@
 │     └── invoke-lambda.ts     
 │   └── logers                    # Abstração para centralizar a construção de logs   
 │     └── logs.ts       
-├── tests/                        # Testes automatizados
 ├── docs/                         # Documentação do projeto
 ├── .vscode/                      # Configurações do VS Code
 ├── node_modules/                 # Dependências do projeto
@@ -86,7 +85,7 @@ Adicione os seguintes scripts no seu package.json para facilitar o uso:
 ```json
 "scripts": {
   "localstack:up": "skeleton-aws-local localstack:up",
-  "localstack:down": "skeleton-aws-local localstack:down"
+  "localstack:down": "skeleton-aws-local localstack:down",
   "localstack:restart": "npm run localstack:down && npm run localstack:up"
 }
 ````
@@ -98,9 +97,6 @@ npm run localstack:up
 
 # Parar o container
 npm run localstack:down
-
-# Ver os logs do LocalStack em tempo real
-npm run localstack:logs
 
 # Reiniciar o ambiente
 npm run localstack:restart
@@ -129,11 +125,35 @@ docker ps
 npm install -D localstack-template
 ````
 
-## 🔁 Exemplo de uso no projeto consumer
+## 🔁 Dependências
+
+Para utilizar o SkeletonAWSLocal é importante instalar algumas dependências para que todos os recursos funcionem adequadamente.
+
+- `rimraf`: Para facilitar a construção e exclusão do diretório dist durante o build
+
+```bash
+npm install rimraf
+```
+
+- `dotenv-cli`: Para facilitar o carregamento automático das variáveis durante a execução dos scripts no projeto-consumer acessando o CLI do `SkeletonAWSLocal`
+
+```bash
+npm install --save-dev dotenv-cli
+```
+
+## 🧪 Scripts Úteis
+
+Abaixo os scripts que devem ser incluídos no **`packaje.json`** no projeto-consumer, para facilitar a operação dos recursos do `SkeletonAWSLocal` utilizando o CLI integrado.
+
 ```json
 "scripts": {
-  "check:local": "localstack-template check",
-  "manage:local": "localstack-template manage"
+  "clean": "rimraf dist",
+  "build:local": "npm run clean && tsc -p tsconfig.json",
+  "package": "dotenv -- skeleton-aws-local package ./dist ./node_modules ./localstack/lambda.zip",
+  "provision": "dotenv -- skeleton-aws-local provision ./localstack/lambda.zip",
+  "prepare": "npm run package && npm run provision",
+  "check:resources": "skeleton-aws-local check",
+  "manage:resources": "skeleton-aws-local manage"
 }
 ````
 
@@ -154,32 +174,69 @@ Este projeto permite disponibilizar recursos locais da AWS, para ambientes de de
 
 ---
 
-## 📥 Comandos disponíveis
+## 🔁 Exemplo de uso no projeto consumer
 
-### `package <distDir> <nodeModulesDir> <outputZip>`
-Empacota uma função Lambda com suas dependências.
+### 📥 Comandos disponíveis
 
-### `provision <lambdaZip>`
-Provisiona recursos no LocalStack com base no arquivo ZIP informado.
 
-### `check`
-Lista todos os recursos provisionados no LocalStack.
+#### `build:local`
 
-### `manage`
+```code
+npm run build:local
+```
+
+Executa o build do código fonte transpilando TypeScript em JavaSript. O script definido no `pacakge.json` exclui, caso exista, o diretório `./dist`. Executa o processo de build definido no arquivo de `tsconfig.json` e após gerar o código transpilado cria a pasta `./dist`. 
+
+
+#### `package <distDir> <nodeModulesDir> <outputZip>`
+```code
+npm run package
+```
+Empacota uma função Lambda com suas dependências. O script definido no `pacakge.json` define os diretórios `./dist` e `./node_modules` para serem empacotados no arquivo `.zip` e define o local **`./localstack`** para salvar o pacote.
+
+> Obs: se o seu código TypeScript é transpilado em outro local, não no diretório `./dist` do projeto, altere o script no `package.json`.
+
+#### `provision <lambdaZip>`
+
+```code
+npm run provision
+```
+
+Provisiona recursos no LocalStack com base no arquivo ZIP empacotado no diretório `./localstack`. O script definido no `pacakge.json` inicia o `CLI` do **`SkeletonAWSLocal`**, passando como parâmetro o `./localstack/lambda.zip`, iniciando o processo de provisionamento dos recursos, definidos no .`env`,  no container do LocalStack.
+
+#### `prepare`
+
+```code
+npm run prepare
+```
+Este script aninha a chamada dos dois scripts: package e provision, que realiza o empacotamento do arquivo .zip e depois provisiona os recursos no LocalStack, preparando o ambiente para ser utilizado localmente.
+
+#### `check:resources`
+```code
+npm run check:resources
+```
+
+Lista todos os recursos provisionados no LocalStack, através do prompt interativo disponibilizado pleo `CLI` do **`SkeletonAWSLocal˜**.
+
+#### `manage:resources`
+```code
+npm run manage:resources
+```
+
 Permite excluir recursos (Lambda, SQS, DynamoDB, etc.) com base em filtros via prompt interativo.
 
 ---
 
 ## 🔍 Verificação interativa de recursos (`check-resources.ts`)
 
-O comando `check` permite listar os recursos existentes no LocalStack de forma **interativa** com suporte ao [Inquirer.js](https://www.npmjs.com/package/inquirer).
+O comando `check:resources` permite listar os recursos existentes no LocalStack de forma **interativa** com suporte ao [Inquirer.js](https://www.npmjs.com/package/inquirer).
 
 ### ▶️ Como funciona
 
 Ao rodar:
 
 ```bash
-npm run check:local
+npm run check:resources
 ```
 
 Você verá um menu como este:
@@ -210,11 +267,9 @@ Você verá um menu como este:
 
 ---
 
-## Manage Resources LocalStack CLI
+## Manage Resources SkeletonAWSLocal CLI
 
 Este CLI permite a exclusão interativa de recursos AWS simulados no LocalStack, suportando múltiplas execuções sem reiniciar o script.
-
----
 
 ## ✨ Funcionalidades
 
@@ -237,7 +292,7 @@ Este CLI permite a exclusão interativa de recursos AWS simulados no LocalStack,
 Execute o script interativo:
 
 ```bash
-npm run manage:local
+npm run manage:resources
 ```
 
 Você verá um menu como este:
@@ -259,12 +314,11 @@ Após a escolha, você será solicitado a fornecer um padrão (regex ou nome exa
 
 Ao final de cada operação, o script perguntará se deseja executar novamente. Você pode continuar excluindo recursos sem reiniciar o CLI.
 
----
+### ⚠️ Aviso
 
-## 🧪 Testes
-```bash
-npm run test
-```
+> Este CLI **apaga recursos**. Use com cautela, especialmente fora de ambientes de teste/LocalStack.
+
+---
 
 ## 🚀 Clonar Projeto
 
@@ -278,27 +332,10 @@ npm install
 
 ---
 
-## 🧪 Scripts Úteis
-
-- `npm run dev:local`: compila, empacota e provisiona as Lambdas no LocalStack
-- `npm run manage:local`: inicia o CLI interativo para gerenciamento de recursos
-- `npm run check:local`: lista recursos atualmente criados no LocalStack
-
-## ⚠️ Aviso
-
-Este CLI **apaga recursos**. Use com cautela, especialmente fora de ambientes de teste/LocalStack.
-
----
-
 ## 🌐  Variáveis de Ambiente
 
 Para que o projeto funcione corretamente com o LocalStack, é necessário configurar algumas variáveis de ambiente. Crie um arquivo .env na raiz do projeto com base no arquivo .env.example, que já contém os nomes das variáveis esperadas.
 
-Para facilitar o carregamento automático dessas variáveis durante a execução dos scripts, recomendamos instalar o pacote dotenv-cli:
-
-```bash
-npm install --save-dev dotenv-cli
-```
 ### 📄 Exemplo de .env
 
 ```env
