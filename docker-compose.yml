@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   localstack:
     image: localstack/localstack:3.2
@@ -12,8 +10,8 @@ services:
       - SERVICES=lambda,sqs,s3,dynamodb,apigateway
       - DEBUG=1
       - DOCKER_HOST=unix:///var/run/docker.sock
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_ACCESS_KEY_ID=skeletonkeyid
+      - AWS_SECRET_ACCESS_KEY=skeletonkey
       - AWS_REGION=us-east-1
       - LAMBDA_EXECUTOR=docker-reuse
       - LOCALSTACK_API_KEY=your-key-if-needed

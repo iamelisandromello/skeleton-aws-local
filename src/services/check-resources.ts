@@ -1,4 +1,3 @@
-// Check Resources Version: v0.2.0
 import {
   checkS3,
   checkSQS,
@@ -29,12 +28,10 @@ async function showMenu() {
 
   const choices = []
 
-  // Adiciona os recursos disponíveis se houver algum
   if (availableResources.length > 0) {
     choices.push(...availableResources)
-    choices.push(new inquirer.Separator()) // Adiciona um separador apenas se houver recursos
+    choices.push(new inquirer.Separator())
   } else {
-    // Mensagem amigável se nenhum recurso estiver habilitado
     console.log(
       '😔 Nenhum recurso do LocalStack está habilitado para verificação.Todos os recursos devem estar desabilitados no seu arquivo .env. Por favor, verifique sua configuração.\n'
     )
@@ -48,7 +45,7 @@ async function showMenu() {
       {
         type: 'list',
         name: 'resource',
-        message: 'Escolha uma opção:', // Mensagem mais genérica
+        message: 'Escolha uma opção:',
         choices
       }
     ])
@@ -89,7 +86,7 @@ async function showMenu() {
             await checkKinesis()
             break
           default:
-            console.warn('⚠️ Recurso inválido.') // Esta linha pode ser alcançada se a lógica for alterada
+            console.warn('⚠️ Recurso inválido.')
         }
       } catch (err) {
         console.error('❌ Erro ao verificar o recurso:', err)

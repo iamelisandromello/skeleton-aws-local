@@ -20,11 +20,7 @@
 	],
 	"license": "MIT",
 	"type": "commonjs",
-	"files": [
-		"dist",
-		"bin",
-		"localstack"
-	],
+	"files": ["dist", "bin", "localstack"],
 	"scripts": {
 		"clean": "rimraf dist",
 		"lint": "npx @biomejs/biome check src",
@@ -41,8 +37,10 @@
 		"build:local": "npm run clean && tsc -p tsconfig-build.json && npm run package:local",
 		"dev:local": "npm run build:local && node -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip",
 		"manage:local": "node --env-file=.env -r ts-node/register src/services/manage-resources.ts",
+		"manage:list": "node --env-file=.env -r ts-node/register src/services/delete-resources-cli.ts",
 		"check:local": "node --env-file=.env -r ts-node/register src/services/check-resources.ts",
-		"provision:local": "node --env-file=.env -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip"
+		"provision:local": "node --env-file=.env -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip",
+		"prepare": "npm run package:local && npm run provision:local"
 	},
 	"dependencies": {
 		"@aws-sdk/client-api-gateway": "^3.817.0",
