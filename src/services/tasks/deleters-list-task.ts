@@ -31,7 +31,6 @@ import { ListTablesCommand, DeleteTableCommand } from '@aws-sdk/client-dynamodb'
 // ===============================================
 // FUNÇÕES DE LISTAGEM DE RECURSOS
 // ===============================================
-
 export async function listLambdaFunctions(): Promise<FunctionConfiguration[]> {
   const { Functions } = await lambda.send(new ListFunctionsCommand({}))
   return Functions ?? []
@@ -105,8 +104,6 @@ export async function deleteSelectedDynamoDbTables(tableNames: string[]) {
 // API Gateway REST APIs
 export async function deleteSelectedRestApis(apiIds: string[]) {
   for (const apiId of apiIds) {
-    // Para obter o nome para o log, talvez seja preciso uma chamada extra se você não tiver ele no id
-    // Ou passar um objeto {id, name} para esta função. Por simplicidade, assumindo que apiId é suficiente.
     await apigateway.send(new DeleteRestApiCommand({ restApiId: apiId }))
     console.log(`🌐 API Gateway excluída: ID ${apiId}`)
   }

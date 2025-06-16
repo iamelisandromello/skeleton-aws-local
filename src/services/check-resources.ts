@@ -45,7 +45,7 @@ async function showMenu() {
       {
         type: 'list',
         name: 'resource',
-        message: 'Escolha uma opção:',
+        message: '? Qual tipo de recurso você deseja visualizar?',
         choices
       }
     ])

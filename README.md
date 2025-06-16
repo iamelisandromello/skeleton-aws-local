@@ -1,7 +1,7 @@
 # SkeletonAWSLocal
 
-![Version](https://img.shields.io/badge/version-0.5.2-blue)
-![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-green)
+![Version](https://img.shields.io/badge/version-1.6.0-blue)
+![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Tested](https://img.shields.io/badge/tests-passing-brightgreen)
 
@@ -38,7 +38,9 @@
 │     ├── selectors.ts                  # Seletor de recursos a serem excluídos
 │     └── tasks/                        # Serviços de gerenciamento dos recursos Localstack
 │       ├── checkers-task.ts            # Tarefa de apoio do serviço de verificação dos recursos
+│       └── deleters-list-task.ts       # Tarefa de apoio lista os recursos disponíveis para exclusão
 │       └── deleters-selectors-task.ts  # Tarefa de apoio do serviço de deleção de recursos
+│       └── should-provision.ts         # Tarefa de apoio verifica disponibilidade dos recursos
 │   └── localstack                      # Scripts de criação de recursos AWS simulados    
 │     ├── create-api-gateway.ts 
 │     ├── create-dynamodb.ts    
@@ -64,7 +66,7 @@
 ```
 ---
 ## 🐳 Executando o LocalStack com Docker
-Para utilizar os recursos da biblioteca skeleton-aws-local localmente, é necessário ter o [Docker](https://www.docker.com/) instalado, pois ele é responsável por subir os serviços simulados da AWS por meio do [LocalStack](https://docs.localstack.cloud/overview/).
+Para utilizar os recursos da biblioteca **SkeletonAwsLocal** localmente, é necessário ter o [Docker](https://www.docker.com/) instalado, pois ele é responsável por subir os serviços simulados da AWS por meio do [LocalStack](https://docs.localstack.cloud/overview/).
 
 ✅ Pré-requisitos
 
@@ -77,7 +79,36 @@ docker --version
 ```
 
 ### 📦 Inicializando o LocalStack
-Este projeto já inclui um arquivo docker-compose.yml configurado com os serviços necessários (Lambda, SQS, S3, DynamoDB e API Gateway).
+Este projeto já inclui um arquivo `docker-compose.yml` configurado com os serviços necessários (Lambda, SQS, S3, DynamoDB e API Gateway).
+
+```docker
+services:
+  localstack:
+    image: localstack/localstack:3.2
+    container_name: localstack
+    ports:
+      - "4566:4566"     # Porta principal de serviços AWS
+      - "4510-4559:4510-4559" # Outras portas internas
+      - "8080:8080"     # UI
+    environment:
+      - SERVICES=lambda,sqs,s3,dynamodb,apigateway
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_ACCESS_KEY_ID=skeletonkeyid
+      - AWS_SECRET_ACCESS_KEY=skeletonkey
+      - AWS_REGION=us-east-1
+      - LAMBDA_EXECUTOR=docker-reuse
+      - LOCALSTACK_API_KEY=your-key-if-needed
+    volumes:
+      - ./localstack:/etc/localstack/init/ready.d  # scripts de inicialização
+      - /var/run/docker.sock:/var/run/docker.sock
+
+```
+
+### 💡 Observação
+O docker-compose.yml disponibilizado é extremamente simples, responsável por disponibilizar o [LocalStack](https://docs.localstack.cloud/overview/) em um container [Docker](https://www.docker.com/). Esta configuração é definida no **SkeletonAWSLocal**, o `projeto-consumer` não gerencia este recurso apenas o utiliza. Portanto se atente as configurações: `AWS_ACCESS_KEY_ID=skeletonkeyid
+`, `AWS_SECRET_ACCESS_KEY=skeletonkey`, `AWS_REGION=us-east-1`que devem ser informadas em seu arquivo `.env`.
+<br></br>
 
 ### 🔁 Scripts automatizados (package.json)
 Adicione os seguintes scripts no seu package.json para facilitar o uso:
@@ -140,6 +171,87 @@ npm install rimraf
 ```bash
 npm install --save-dev dotenv-cli
 ```
+---
+
+## 🌐  Habilitar Recursos a Serem Provisionados
+
+Para definir quais recursos serão provisionados no `Localstack`, o **SkeletonAWSLocal** se utiliza de variáveis de ambientes que devem ser definidas no arquivo `.env` do projeto-consumer. Abaixo disponibilizo alguns exemplos para ilustrar a mecânica de disponibilização dos recursos.
+
+- `BUCKET S3`: Para disponibilizar um bucker S3 no localstack, defina as duas variáveis abaixo o seu arquivo `.env`.
+
+```env
+CHECK_LOCALSTACK_S3=true
+BUCKET_NAME=meu-unico-bucket-s3
+```
+
+- `LAMBDA`: Para disponibilizar uma lambda no localstack, defina as duas variáveis abaixo no seu arquivo `.env`.
+
+```env
+CHECK_LOCALSTACK_LAMBDA=true
+LAMBDA_NAME=meu-lambda
+```
+
+- `API GATEWAY/ROUTES`: Para disponibilizar uma Api Gateway e definir rotas no localstack, é necessário definir algumas variáveis no seu arquivo `.env`. Esta variáveis vão definir o status de enable para provisionar o recurso, o nome que definiremos para o recurso e um array onde definimos o método e o path das rotas que desejamos provisionar
+
+```env
+CHECK_LOCALSTACK_APIGATEWAY=true
+API_NAME=meu-api-gateway
+API_ROUTES=[{"path":"/load","method":"GET"},{"path":"/create","method":"POST"},{"path":"/logout","method":"POST"}]
+```
+
+Para que o projeto funcione corretamente com o LocalStack, é necessário configurar algumas variáveis de ambiente. Crie um arquivo .env na raiz do projeto com base no arquivo .env.example, que já contém os nomes das variáveis esperadas.
+
+### 📄 Exemplo de .env
+
+```env
+TZ=UTC
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=skeletonkeyid
+AWS_SECRET_ACCESS_KEY=skeletonkey
+
+LAMBDA_NAME=meu-lambda
+API_NAME=meu-api-gateway
+CORS_ORIGIN_PERMISSION=*
+BUCKET_NAME=meu-unico-bucket-s3
+SQS_QUEUE_NAME=skeleton-local-stack-queue
+EXAMPLE_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/125702582030/skeleton-pub-queue
+LOCALSTACK_ENDPOINT=http://localhost:4566
+
+CHECK_LOCALSTACK_S3=true
+CHECK_LOCALSTACK_SQS=true
+CHECK_LOCALSTACK_SNS=false
+CHECK_LOCALSTACK_LAMBDA=true
+CHECK_LOCALSTACK_DYNAMODB=true
+CHECK_LOCALSTACK_KINESIS=false
+CHECK_LOCALSTACK_APIGATEWAY=true
+CHECK_LOCALSTACK_CLOUDWATCH=false
+
+API_ROUTES=[{"path":"/load","method":"GET"},{"path":"/create","method":"POST"},{"path":"/logout","method":"POST"}]
+```
+
+## 📌 Observações
+
+Não utilize aspas (simples ou duplas) nos valores das variáveis no arquivo .env, pois o dotenv-cli inclui as aspas literalmente durante o parsing, o que pode causar falhas inesperadas.
+<br>Exemplo errado:
+
+```env
+AWS_REGION="us-east-1"
+Resultado interpretado: "us-east-1" (com aspas duplas incluídas)
+```
+
+<br>Exemplo correto:
+
+```env
+AWS_REGION=us-east-1
+```
+
+Nunca adicione o arquivo `.env` ao Git. Ele deve estar no `.gitignore` para evitar exposição acidental de dados sensíveis, mesmo em ambiente local.
+
+O `.env.example` serve como referência e não deve conter valores sensíveis reais.
+
+Os valores fornecidos no `.env.example` são genéricos e compatíveis com o LocalStack. Eles podem ser usados como padrão caso você deseje inicializar rapidamente o projeto.
+
+---
 
 ## 🧪 Scripts Úteis
 
@@ -156,6 +268,10 @@ Abaixo os scripts que devem ser incluídos no **`packaje.json`** no projeto-cons
   "manage:resources": "skeleton-aws-local manage"
 }
 ````
+
+### 💡 Observação
+Importante dizer que os scripts apresentados são fundamentais para o funcionameto dos recursos, pois executam comandos diretamente no `CLI` disponibilizado pelo **SkeletoAWSLocal**. Então, não os altere para garantir o funcionamento.Excetuando evidentemente o script de `build:local` que deve ser adeqaudo ao seu ambiente.
+
 
 ---
 
@@ -209,7 +325,7 @@ Provisiona recursos no LocalStack com base no arquivo ZIP empacotado no diretór
 ```code
 npm run prepare
 ```
-Este script aninha a chamada dos dois scripts: package e provision, que realiza o empacotamento do arquivo .zip e depois provisiona os recursos no LocalStack, preparando o ambiente para ser utilizado localmente.
+Este script aninha a chamada dos dois scripts: `package` e `provision`, que realiza o empacotamento do arquivo `.zip` e depois provisiona os recursos no LocalStack, preparando o ambiente para ser utilizado localmente.
 
 #### `check:resources`
 ```code
@@ -265,7 +381,27 @@ Você verá um menu como este:
 - API Gateway
 - Rotas do API Gateway
 
----
+### 🔁 Múltiplas execuções
+
+Ao final de cada operação, o script perguntará se deseja executar novamente. Você pode continuar excluindo recursos sem reiniciar o CLI.
+
+### 😔 Fallback
+
+> Se nenhum recurso tenha sido provisionado no Localstack, será apresentado a seguinte mensage
+
+```bash
+🚦 Verificando status do LocalStack...
+
+📡 Verificando saúde do LocalStack...
+✅ LocalStack está rodando normalmente!
+
+🔍 Selecione o recurso do LocalStack para verificar:
+
+😔 Nenhum recurso do LocalStack está habilitado para verificação.Todos os recursos devem estar desabilitados no seu arquivo .env. Por favor, verifique sua configuração.
+
+? Escolha uma opção: (Use arrow keys)
+❯ Sair
+```
 
 ## Manage Resources SkeletonAWSLocal CLI
 
@@ -287,7 +423,7 @@ Este CLI permite a exclusão interativa de recursos AWS simulados no LocalStack,
 
 ---
 
-## ▶️ Uso
+### ▶️ Como funciona
 
 Execute o script interativo:
 
@@ -298,14 +434,17 @@ npm run manage:resources
 Você verá um menu como este:
 
 ```text
-? Qual recurso deseja excluir? (Use as setas)
-❯ lambda
-  sqs
-  s3
-  dynamodb
-  apigateway
-  apigateway-route
-  sair
+🧹 Gerenciador de recursos AWS - CLI
+
+? Qual tipo de recurso você deseja gerenciar/excluir?
+❯ Lambda Functions
+  SQS Queues
+  S3 Buckets
+  DynamoDB Tables
+  API Gateway (REST APIs)
+  API Gateway (Routes)
+ ──────────────
+(Use arrow keys to reveal more choices)
 ```
 
 Após a escolha, você será solicitado a fornecer um padrão (regex ou nome exato) para filtrar os recursos a excluir.
@@ -314,9 +453,51 @@ Após a escolha, você será solicitado a fornecer um padrão (regex ou nome exa
 
 Ao final de cada operação, o script perguntará se deseja executar novamente. Você pode continuar excluindo recursos sem reiniciar o CLI.
 
+
+### 😔 Fallback
+
+> Se nenhum recurso tenha sido provisionado no Localstack, será apresentado a seguinte mensage.
+
+```bash
+🚦 Verificando status do LocalStack...
+
+📡 Verificando saúde do LocalStack...
+✅ LocalStack está rodando normalmente!
+
+🧹 Gerenciador de recursos AWS - CLI:
+
+😔 Nenhum tipo de recurso está habilitado para exclusão no momento. Por favor, verifique sua configuração de recursos no LocalStack.
+? Qual tipo de recurso você deseja gerenciar/excluir? (Use arrow keys)
+❯ Sair do Gerenciador
+
+```
+
 ### ⚠️ Aviso
 
 > Este CLI **apaga recursos**. Use com cautela, especialmente fora de ambientes de teste/LocalStack.
+
+### Importante
+
+Tanto na execução do `manage:resources` quanto `check:resourses`, no caso do Localstack esteja indisponível no seu ambiente local, conteinar do Docker off por exemplo, será apresentado a mensagem abaixo:
+
+```bash
+🚦 Verificando status do LocalStack...
+
+📡 Verificando saúde do LocalStack...
+🛑 Não foi possível conectar ao LocalStack.
+💡 Certifique-se de que o container está rodando (porta 4566).
+
+    🚫 LocalStack está OFFLINE
+    ──────────────────────────────────────────────
+    💡 Verifique se o container está ativo:
+       docker ps | grep localstack
+    🔄 Reinicie com:
+       docker-compose up -d localstack
+    📚 Documentação:
+       https://docs.localstack.cloud/getting-started/
+    ──────────────────────────────────────────────
+❌ LocalStack não está em execução. Por favor, inicie o LocalStack e tente novamente.
+```
 
 ---
 
@@ -329,64 +510,6 @@ git clone https://github.com/iamelisandromello/localstack-template.git
 cd localstack-template
 npm install
 ```
-
----
-
-## 🌐  Variáveis de Ambiente
-
-Para que o projeto funcione corretamente com o LocalStack, é necessário configurar algumas variáveis de ambiente. Crie um arquivo .env na raiz do projeto com base no arquivo .env.example, que já contém os nomes das variáveis esperadas.
-
-### 📄 Exemplo de .env
-
-```env
-TZ=UTC
-AWS_REGION=us-east-1
-AWS_ACCESS_KEY_ID=test
-AWS_SECRET_ACCESS_KEY=test
-
-LAMBDA_NAME=meu-lambda
-API_NAME=meu-api-gateway
-CORS_ORIGIN_PERMISSION=*
-BUCKET_NAME=meu-unico-bucket-s3
-SQS_QUEUE_NAME=skeleton-local-stack-queue
-EXAMPLE_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/125702582030/skeleton-pub-queue
-LOCALSTACK_ENDPOINT=http://localhost:4566
-
-CHECK_LOCALSTACK_S3=true
-CHECK_LOCALSTACK_SQS=true
-CHECK_LOCALSTACK_SNS=false
-CHECK_LOCALSTACK_LAMBDA=true
-CHECK_LOCALSTACK_DYNAMODB=true
-CHECK_LOCALSTACK_KINESIS=false
-CHECK_LOCALSTACK_APIGATEWAY=true
-CHECK_LOCALSTACK_CLOUDWATCH=false
-
-API_ROUTES=[{"path":"/load","method":"GET"},{"path":"/create","method":"POST"},{"path":"/logout","method":"POST"}]
-```
-
-## 📌 Observações
-
-Não utilize aspas (simples ou duplas) nos valores das variáveis no arquivo .env, pois o dotenv-cli inclui as aspas literalmente durante o parsing, o que pode causar falhas inesperadas.
-<br>Exemplo errado:
-
-```env
-AWS_REGION="us-east-1"
-Resultado interpretado: "us-east-1" (com aspas duplas incluídas)
-```
-
-<br>Exemplo correto:
-
-```env
-AWS_REGION=us-east-1
-```
-
-Nunca adicione o arquivo `.env` ao Git. Ele deve estar no `.gitignore` para evitar exposição acidental de dados sensíveis, mesmo em ambiente local.
-
-O `.env.example` serve como referência e não deve conter valores sensíveis reais.
-
-Os valores fornecidos no `.env.example` são genéricos e compatíveis com o LocalStack. Eles podem ser usados como padrão caso você deseje inicializar rapidamente o projeto.
-
-
 
 ---
 
