@@ -38,8 +38,7 @@
 		"dev:local": "npm run build:local && node -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip",
 		"manage:local": "node --env-file=.env -r ts-node/register src/services/manage-resources.ts",
 		"check:local": "node --env-file=.env -r ts-node/register src/services/check-resources.ts",
-		"provision:local": "node --env-file=.env -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip",
-		"prepare": "npm run package:local && npm run provision:local"
+		"provision:local": "node --env-file=.env -r ts-node/register bin/cli.ts provision ./localstack/lambda.zip"
 	},
 	"dependencies": {
 		"@aws-sdk/client-api-gateway": "^3.817.0",
