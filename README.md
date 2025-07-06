@@ -94,8 +94,8 @@ services:
       - SERVICES=lambda,sqs,s3,dynamodb,apigateway
       - DEBUG=1
       - DOCKER_HOST=unix:///var/run/docker.sock
-      - AWS_ACCESS_KEY_ID=skeletonkeyid
-      - AWS_SECRET_ACCESS_KEY=skeletonkey
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
       - AWS_REGION=us-east-1
       - LAMBDA_EXECUTOR=docker-reuse
       - LOCALSTACK_API_KEY=your-key-if-needed
@@ -106,9 +106,11 @@ services:
 ```
 
 ### 💡 Observação
-O docker-compose.yml disponibilizado é extremamente simples, responsável por disponibilizar o [LocalStack](https://docs.localstack.cloud/overview/) em um container [Docker](https://www.docker.com/). Esta configuração é definida no **SkeletonAWSLocal**, o `projeto-consumer` não gerencia este recurso apenas o utiliza. Portanto se atente as configurações: `AWS_ACCESS_KEY_ID=skeletonkeyid
-`, `AWS_SECRET_ACCESS_KEY=skeletonkey`, `AWS_REGION=us-east-1`que devem ser informadas em seu arquivo `.env`.
+O docker-compose.yml disponibilizado é extremamente simples, responsável por disponibilizar o [LocalStack](https://docs.localstack.cloud/overview/) em um container [Docker](https://www.docker.com/). Esta configuração é definida no **SkeletonAWSLocal**, o `projeto-consumer` não gerencia este recurso apenas o utiliza. Portanto se atente as configurações: `AWS_ACCESS_KEY_ID=test
+`, `AWS_SECRET_ACCESS_KEY=test`, `AWS_REGION=us-east-1`que devem ser informadas em seu arquivo `.env`.
 <br></br>
+
+> O [LocalStack](https://docs.localstack.cloud/overview/) utiliza por default o valor `test`para `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY`. Portanto, vamos manter para compatibilidade e evitar erros de credenciais.
 
 ### 🔁 Scripts automatizados (package.json)
 Adicione os seguintes scripts no seu package.json para facilitar o uso:
