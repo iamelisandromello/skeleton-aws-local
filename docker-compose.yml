@@ -7,11 +7,11 @@ services:
       - "4510-4559:4510-4559" # Outras portas internas
       - "8080:8080"     # UI
     environment:
-      - SERVICES=lambda,sqs,s3,dynamodb,apigateway
+      - SERVICES=lambda,sqs,s3,dynamodb,dynamodbstreams,apigateway
       - DEBUG=1
       - DOCKER_HOST=unix:///var/run/docker.sock
-      - AWS_ACCESS_KEY_ID=skeletonkeyid
-      - AWS_SECRET_ACCESS_KEY=skeletonkey
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
       - AWS_REGION=us-east-1
       - LAMBDA_EXECUTOR=docker-reuse
       - LOCALSTACK_API_KEY=your-key-if-needed
