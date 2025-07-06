@@ -33,17 +33,21 @@ export async function createBucket() {
     }
   }
 
+  const lambdaArn = `arn:aws:lambda:us-east-1:000000000000:function:${LAMBDA_NAME}`
+  console.log('🧭 Lambda ARN LocalStack:', lambdaArn)
+
   try {
     await lambda.send(
       new AddPermissionCommand({
         Action: 'lambda:InvokeFunction',
         FunctionName: LAMBDA_NAME,
         Principal: 's3.amazonaws.com',
-        StatementId: 's3-permission',
+        StatementId: `s3-permission-${Math.random().toString(36).substring(2, 10)}`,
         SourceArn: `arn:aws:s3:::${BUCKET_NAME}`
       })
     )
     console.log('✅ Permissão de invocação adicionada à Lambda para o S3.')
+    await new Promise((resolve) => setTimeout(resolve, 2000))
   } catch (err: unknown) {
     if (
       typeof err === 'object' &&
@@ -56,9 +60,6 @@ export async function createBucket() {
       console.error('❌ Erro ao adicionar permissão à Lambda:', err)
     }
   }
-
-  // ⚠️ ARN do Lambda para LocalStack (conta padrão 000000000000)
-  const lambdaArn = `arn:aws:lambda:us-east-1:000000000000:function:${LAMBDA_NAME}`
 
   try {
     await s3.send(
