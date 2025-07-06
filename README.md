@@ -200,7 +200,7 @@ API_ROUTES=[{"path":"/load","method":"GET"},{"path":"/create","method":"POST"},{
 
 ### 🆕 📦 Provisionamento de Múltiplas Tabelas DynamoDB com Seeds
 
-A partir da versão 1.7.0, o SkeletonAWSLocal permite criar múltiplas tabelas DynamoDB e, opcionalmente, popular essas tabelas com dados iniciais automaticamente durante o processo de provisionamento.
+A partir da versão 1.8.0, o SkeletonAWSLocal permite criar múltiplas tabelas DynamoDB e, opcionalmente, popular essas tabelas com dados iniciais automaticamente durante o processo de provisionamento.
 
 Essa funcionalidade suporta dois modos híbridos de definição de dados:
 

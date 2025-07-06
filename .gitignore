@@ -2,6 +2,7 @@
 node_modules
 package-lock.json
 dist
+seeds
 coverage
 yarn.lock
 .vscode/launch.json
