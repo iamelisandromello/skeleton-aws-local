@@ -36,6 +36,10 @@ export const variables = {
   sqsQueueName: env.get('SQS_QUEUE_NAME').required().asString(),
   queueUrl: env.get('EXAMPLE_QUEUE_URL').required().asString(),
 
+  dynamoDbTables: env.get('DYNAMODB_TABLES').required().asString(),
+  dynamoDbSeeds: env.get('DYNAMODB_SEEDS').asString(),
+  dynamoDbSeedFile: env.get('DYNAMODB_SEED_FILE').required().asString(),
+
   localstackEndpoint: env.get('LOCALSTACK_ENDPOINT').required().asString(),
 
   checkLocalstack: {

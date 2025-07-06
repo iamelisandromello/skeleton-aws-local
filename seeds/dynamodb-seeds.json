@@ -1,0 +1,37 @@
+{
+	"economic-group": [
+		{
+			"id": "45dccb77-ce71-4b23-8843-29489053b0bf",
+			"name": "SONHO DE CASA ENXOVAIS LTDA",
+			"trade_name": "Carolina ABC",
+			"document": "37378490000174",
+			"email": "rosa_dapaz@easytechconsultoria.com.br",
+			"phone": "13998443408",
+			"created_at": "2025-07-03T16:55:24.036751",
+			"updated_at": "2025-07-03T16:55:24.036762",
+			"companies": [
+				{
+					"id": "064b92ee-5a39-40c0-bb27-eb2ab05dd98e",
+					"name": "VAREJAO MODAS SAO GONCALO LTDA",
+					"trade_name": "VAREJAO MODAS SAO GONCALO LTDA",
+					"document": "20068768000104",
+					"main": false
+				},
+				{
+					"id": "2ee4883a-e1c4-4f9c-80c3-3209c780a1a0",
+					"name": "HARDZ BRANDS LTDA",
+					"trade_name": "HARDZ BRANDS LTDA",
+					"document": "43037250000109",
+					"main": false
+				},
+				{
+					"id": "f10dde8b-0b1e-4c52-b93b-32a133b34d24",
+					"name": "SONHO DE CASA ENXOVAIS LTDA",
+					"trade_name": "SONHO DE CASA ENXOVAIS LTDA",
+					"document": "37378490000174",
+					"main": true
+				}
+			]
+		}
+	]
+}

@@ -1,6 +1,6 @@
 # SkeletonAWSLocal
 
-![Version](https://img.shields.io/badge/version-1.6.0-blue)
+![Version](https://img.shields.io/badge/version-1.8.0-blue)
 ![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Tested](https://img.shields.io/badge/tests-passing-brightgreen)
@@ -135,7 +135,6 @@ npm run localstack:restart
 
 #### Passo a passo
 1. Suba os serviços:
-Suba os serviços:
 
 ```bash
 npm run localstack:up
@@ -199,6 +198,107 @@ API_NAME=meu-api-gateway
 API_ROUTES=[{"path":"/load","method":"GET"},{"path":"/create","method":"POST"},{"path":"/logout","method":"POST"}]
 ```
 
+### 🆕 📦 Provisionamento de Múltiplas Tabelas DynamoDB com Seeds
+
+A partir da versão 1.7.0, o SkeletonAWSLocal permite criar múltiplas tabelas DynamoDB e, opcionalmente, popular essas tabelas com dados iniciais automaticamente durante o processo de provisionamento.
+
+Essa funcionalidade suporta dois modos híbridos de definição de dados:
+
+> Via .env (modo inline — ideal para poucos dados)
+
+> Via arquivo .seeds/dynamodb-seeds.json (modo externo — ideal para estruturas maiores e legibilidade)
+
+#### ✅ Habilitando o recurso
+```env
+CHECK_LOCALSTACK_DYNAMODB=true
+```
+
+#### 🧱 Definindo múltiplas tabelas no .env
+
+Use a variável ```DYNAMODB_TABLES``` para configurar todas as tabelas. O valor deve ser um JSON em uma única linha.
+
+**Exemplo:**
+```env
+DYNAMODB_TABLES=[{"TableName":"customers","KeySchema":[{"AttributeName":"id","KeyType":"HASH"}],"AttributeDefinitions":[{"AttributeName":"id","AttributeType":"S"}],"ProvisionedThroughput":{"ReadCapacityUnits":5,"WriteCapacityUnits":5}},{"TableName":"orders","KeySchema":[{"AttributeName":"orderId","KeyType":"HASH"},{"AttributeName":"createdAt","KeyType":"RANGE"}],"AttributeDefinitions":[{"AttributeName":"orderId","AttributeType":"S"},{"AttributeName":"createdAt","AttributeType":"N"}],"ProvisionedThroughput":{"ReadCapacityUnits":10,"WriteCapacityUnits":10}}]
+```
+
+#### 📥 Populando as tabelas com dados iniciais (Seeds)
+Você pode usar uma das abordagens abaixo, ou até combinar ambas:
+
+**🅰️ Opção 1 — Definir os dados no .env**
+
+```e
+DYNAMODB_SEEDS={"customers":[{"id":"1","name":"Maria"}],"orders":[{"orderId":"X001","createdAt":20250705}]}
+```
+
+**🅱️ Opção 2 — Criar o arquivo .seeds/dynamodb-seeds.json**
+
+> A biblioteca irá procurar automaticamente por este arquivo se a variável DYNAMODB_SEEDS não estiver definida no .env.
+
+<P>
+<B>Exemplo de conteúdo do .seeds/dynamodb-seeds.json</B>
+</P>
+
+```env
+{
+  "customers": [
+    {
+      "id": "45dccb77-ce71-4b23-8843-29489053b0bf",
+      "name": "SONHO DE CASA ENXOVAIS LTDA",
+      "email": "rosa_dapaz@easytechconsultoria.com.br",
+      "phone": "13998443408",
+      "document": "37378490000174",
+      "trade_name": "Carolina ABC",
+      "updated_at": "2025-07-03T16:55:24.036762",
+      "created_at": "2025-07-03T16:55:24.036751",
+      "companies": [
+        {
+          "id": "064b92ee-5a39-40c0-bb27-eb2ab05dd98e",
+          "document": "20068768000104",
+          "name": "VAREJAO MODAS SAO GONCALO LTDA",
+          "main": false,
+          "trade_name": "VAREJAO MODAS SAO GONCALO LTDA"
+        },
+        {
+          "id": "2ee4883a-e1c4-4f9c-80c3-3209c780a1a0",
+          "document": "43037250000109",
+          "name": "HARDZ BRANDS LTDA",
+          "main": false,
+          "trade_name": "HARDZ BRANDS LTDA"
+        }
+      ]
+    }
+  ]
+}
+
+```
+
+### 📋 Estratégia Híbrida
+
+```
+| Origem                       | Prioridade | Recomendado para            |
+| ---------------------------- | ---------- | --------------------------- |
+| `.env > DYNAMODB_SEEDS`      | Alta       | Dados pequenos/rápidos      |
+| `.seeds/dynamodb-seeds.json` | Fallback   | Dados estruturados/legíveis |
+
+```
+
+#### ⚠️ Cuidados com o .env
+
+- Use JSON válido compactado (sem quebras de linha).
+
+- Utilize ferramentas como ```jsonformatter.org/minify``` para converter o conteúdo.
+
+- O ```.env``` não deve conter comentários ou caracteres especiais fora do padrão key=value.
+
+- Arquivos `.env` não suportam objetos ou arrays JSON com múltiplas linhas. Por padrão, variáveis em `.env` devem ser strings em uma única linha. 
+
+#### 📦 Resultado
+Ao executar o script de provisionamento, as tabelas são criadas com base em ```DYNAMODB_TABLES``` e os dados são automaticamente inseridos (via ```PutItemCommand```) com base no ```DYNAMODB_SEEDS``` ou no arquivo ```.seeds/dynamodb-seeds.json```.
+
+
+## Ambiente via Variáveis de ambiente
+
 Para que o projeto funcione corretamente com o LocalStack, é necessário configurar algumas variáveis de ambiente. Crie um arquivo .env na raiz do projeto com base no arquivo .env.example, que já contém os nomes das variáveis esperadas.
 
 ### 📄 Exemplo de .env
@@ -206,16 +306,25 @@ Para que o projeto funcione corretamente com o LocalStack, é necessário config
 ```env
 TZ=UTC
 AWS_REGION=us-east-1
-AWS_ACCESS_KEY_ID=skeletonkeyid
-AWS_SECRET_ACCESS_KEY=skeletonkey
-
+AWS_ACCESS_KEY_ID=test
 LAMBDA_NAME=meu-lambda
-API_NAME=meu-api-gateway
 CORS_ORIGIN_PERMISSION=*
+API_NAME=meu-api-gateway
+AWS_SECRET_ACCESS_KEY=test
 BUCKET_NAME=meu-unico-bucket-s3
 SQS_QUEUE_NAME=skeleton-local-stack-queue
-EXAMPLE_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/125702582030/skeleton-pub-queue
 LOCALSTACK_ENDPOINT=http://localhost:4566
+EXAMPLE_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/125702582030/skeleton-pub-queue
+API_ROUTES=[{"path":"/load","method":"GET"},{"path":"/create","method":"POST"},{"path":"/logout","method":"POST"}]
+
+# Lista de tabelas a serem criadas no LocalStack
+DYNAMODB_TABLES=[{"TableName": "customers","KeySchema": [{ "AttributeName": "id", "KeyType": "HASH" }],"AttributeDefinitions": [{ "AttributeName": "id", "AttributeType": "S" }],"ProvisionedThroughput": {"ReadCapacityUnits": 5,"WriteCapacityUnits": 5}}]
+
+# Opção 1: Seed direto no .env (como string JSON)
+DYNAMODB_SEEDS={"customers": [{"id": "uuid-123","name": "Exemplo Cliente","document": "12345678900000","created_at": "2025-07-05T12:00:00Z"}]}
+
+# Opção 2: Caminho para arquivo JSON de seed
+DYNAMODB_SEED_FILE=./seeds/dynamodb-seeds.json
 
 CHECK_LOCALSTACK_S3=true
 CHECK_LOCALSTACK_SQS=true
@@ -225,21 +334,20 @@ CHECK_LOCALSTACK_DYNAMODB=true
 CHECK_LOCALSTACK_KINESIS=false
 CHECK_LOCALSTACK_APIGATEWAY=true
 CHECK_LOCALSTACK_CLOUDWATCH=false
-
-API_ROUTES=[{"path":"/load","method":"GET"},{"path":"/create","method":"POST"},{"path":"/logout","method":"POST"}]
 ```
 
 ## 📌 Observações
 
-Não utilize aspas (simples ou duplas) nos valores das variáveis no arquivo .env, pois o dotenv-cli inclui as aspas literalmente durante o parsing, o que pode causar falhas inesperadas.
-<br>Exemplo errado:
+Não utilize aspas (simples ou duplas) nos valores das variáveis no arquivo ```.env```, pois o ```dotenv-cli``` inclui as aspas literalmente durante o parsing, o que pode causar falhas inesperadas.
+
+<br>**Exemplo errado:**
 
 ```env
 AWS_REGION="us-east-1"
 Resultado interpretado: "us-east-1" (com aspas duplas incluídas)
 ```
 
-<br>Exemplo correto:
+<br>**Exemplo correto:**
 
 ```env
 AWS_REGION=us-east-1
